@@ -86,7 +86,7 @@ class MapActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         itemsView.layoutManager = LinearLayoutManager(this)
         val adapter  = CoffeeShopsSimpleListAdapter(
-            getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown),
+            getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
             coffeeShopsViewModel.coffeeShops.value,
             { position: Int -> focusByModelPosition(position) })
 

@@ -2,17 +2,49 @@
 <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_width="match_parent" android:layout_height="@dimen/item_height">
 
     <TextView
             android:id="@+id/shop_name"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/item_height"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_32dp"
+            app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
-            android:gravity="center_vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/shop_metadata_simple"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/distance"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@android:color/black"/>
+
+    <TextView
+            android:id="@+id/shop_metadata_simple"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_32dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shop_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/distance"/>
+
+    <TextView
+            android:id="@+id/distance"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@color/colorSecondary"
+            android:layout_width="@dimen/size_64dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -23,5 +23,14 @@
     <string name="taitung">台東</string>
     <string name="penghu">澎湖</string>
     <string name="lienchiang">連江</string>
-    <string name="unknown">未知的地點</string>
+    <string name="unknown_location">未知的地點</string>
+    <string name="plugin">插座: %1$s</string>
+    <string name="wifi">Wifi: </string>
+    <string name="socket_yes">有插座</string>
+    <string name="socket_no">無插座</string>
+    <string name="socket_maybe">看座位</string>
+    <string name="yes">\u25cb</string>
+    <string name="maybe">\u25b3</string>
+    <string name="no">\u0058</string>
+    <string name="unkonwn">\u2753</string>
 </resources>
