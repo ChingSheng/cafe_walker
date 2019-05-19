@@ -49,7 +49,8 @@ class CoffeeShopsSimpleListAdapter(
 
     class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun onBind(coffeeShop: Pair<CoffeeShop, Double>) {
-            itemView.findViewById<TextView>(R.id.shop_name).text = coffeeShop.first.name + " " + getDistance(coffeeShop.second)
+            itemView.findViewById<TextView>(R.id.shop_name).text =
+                coffeeShop.first.name + " " + getDistance(coffeeShop.second)
         }
 
         private fun getDistance(second: Double): String {
@@ -67,18 +68,20 @@ class CoffeeShopsSimpleListAdapter(
         }
     }
 
-    fun getBottomSheetCallback():BottomSheetBehavior.BottomSheetCallback {
-        return object: BottomSheetBehavior.BottomSheetCallback() {
+    fun getBottomSheetCallback(): BottomSheetBehavior.BottomSheetCallback {
+        return object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
 
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 bottomSheet as RecyclerView
-                val imageView = bottomSheet.findViewHolderForAdapterPosition(0).itemView.findViewById(R.id.swipe_icon) as ImageView
-                when(newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
-                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
+                bottomSheet.findViewHolderForAdapterPosition(0)?.let {
+                    val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
+                    when (newState) {
+                        BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
+                        BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
+                    }
                 }
             }
         }
