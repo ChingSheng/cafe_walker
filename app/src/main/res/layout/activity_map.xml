@@ -15,11 +15,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-
     <android.support.v7.widget.RecyclerView
             android:id="@+id/items"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="@dimen/recycler_view_height"
             app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
             android:background="@android:color/white"
             app:behavior_peekHeight="@dimen/size_64dp"
