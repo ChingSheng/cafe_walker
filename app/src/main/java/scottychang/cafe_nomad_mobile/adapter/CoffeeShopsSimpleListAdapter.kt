@@ -1,9 +1,11 @@
 package scottychang.cafe_nomad_mobile.adapter
 
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import scottychang.cafe_nomad_mobile.R
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
@@ -36,7 +38,6 @@ class CoffeeShopsSimpleListAdapter(
         }
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = if (position == TITLE_TYPE) {
         holder as CoffeeShopTitleViewHolder
         holder.onBind(title)
@@ -64,5 +65,23 @@ class CoffeeShopsSimpleListAdapter(
         fun onBind(title: String) {
             itemView.findViewById<TextView>(R.id.title).text = title;
         }
+    }
+
+    fun getBottomSheetCallback():BottomSheetBehavior.BottomSheetCallback {
+        return object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                bottomSheet as RecyclerView
+                val imageView = bottomSheet.findViewHolderForAdapterPosition(0).itemView.findViewById(R.id.swipe_icon) as ImageView
+                when(newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
+                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
+                }
+            }
+        }
+
     }
 }

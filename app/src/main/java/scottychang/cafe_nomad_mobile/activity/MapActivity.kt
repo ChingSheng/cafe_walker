@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
@@ -38,6 +40,7 @@ class MapActivity : AppCompatActivity() {
     private val mapView: MapView by bindView(R.id.map)
     private val mapController: IMapController by lazy { mapView.controller }
     private val itemsView: RecyclerView by bindView(R.id.items)
+
     private val floatingButton: FloatingActionButton by bindView(R.id.floating_button)
     private val loading: FrameLayout by bindView(R.id.loading)
 
@@ -72,7 +75,6 @@ class MapActivity : AppCompatActivity() {
         coffeeShopsViewModel.exceptions.observe(this, Observer { Toast.makeText(this, it?.message ?: "UnknownError", Toast.LENGTH_LONG).show() })
         coffeeShopsViewModel.loading.observe(this, Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
 
-
         floatingButton.setOnClickListener { positioningViewModel.reloadFromGps() }
     }
 
@@ -84,10 +86,15 @@ class MapActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         itemsView.layoutManager = LinearLayoutManager(this)
-        itemsView.adapter = CoffeeShopsSimpleListAdapter(
+        itemsView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager(this).orientation));
+
+        val adapter  = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown),
             coffeeShopsViewModel.coffeeShops.value,
             { position: Int -> focusByModelPosition(position) })
+
+        BottomSheetBehavior.from(itemsView).setBottomSheetCallback(adapter.getBottomSheetCallback())
+        itemsView.adapter = adapter
     }
 
     private fun focusByModelPosition(position: Int) {
