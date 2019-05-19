@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">CafeNomad:Mobile</string>
+    <string name="location_north">北部</string>
+    <string name="location_middle">中部</string>
+    <string name="location_south">南部</string>
+    <string name="location_east">東部</string>
+    <string name="location_isolated">外島</string>
+    <string name="taipei">台北</string>
+    <string name="keelung">基隆</string>
+    <string name="taoyuan">桃園</string>
+    <string name="hsinchu">新竹</string>
+    <string name="miaoli">苗栗</string>
+    <string name="taichung">台中</string>
+    <string name="changhua">彰化</string>
+    <string name="nantou">南投</string>
+    <string name="yunlin">雲林</string>
+    <string name="chiayi">嘉義</string>
+    <string name="tainan">台南</string>
+    <string name="kaohsiung">高雄</string>
+    <string name="pingtung">屏東</string>
+    <string name="yilan">宜蘭</string>
+    <string name="hualien">花蓮</string>
+    <string name="taitung">台東</string>
+    <string name="penghu">澎湖</string>
+    <string name="lienchiang">連江</string>
+    <string name="unknown">未知的地點</string>
+</resources>
