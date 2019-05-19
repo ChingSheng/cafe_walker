@@ -9,7 +9,6 @@ import android.support.annotation.IdRes
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
@@ -86,8 +85,6 @@ class MapActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         itemsView.layoutManager = LinearLayoutManager(this)
-        itemsView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager(this).orientation));
-
         val adapter  = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown),
             coffeeShopsViewModel.coffeeShops.value,
@@ -164,8 +161,10 @@ class MapActivity : AppCompatActivity() {
             R.id.taitung -> TwCity.TAITUNG
             R.id.penghu -> TwCity.PENGHU
             R.id.lienchiang -> TwCity.LIENCHIANG
-            else -> TwCity.TAIPEI
-        }.also { coffeeShopsViewModel.setCoffeeShopsCity(it) }
+            else -> null
+        }?.let {
+            coffeeShopsViewModel.setCoffeeShopsCity(it)
+        }
         return true
     }
 }
