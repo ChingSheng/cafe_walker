@@ -1,5 +1,6 @@
 package scottychang.cafe_nomad_mobile.adapter
 
+import android.content.Context
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -49,15 +50,33 @@ class CoffeeShopsSimpleListAdapter(
 
     class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun onBind(coffeeShop: Pair<CoffeeShop, Double>) {
-            itemView.findViewById<TextView>(R.id.shop_name).text =
-                coffeeShop.first.name + " " + getDistance(coffeeShop.second)
+            itemView.findViewById<TextView>(R.id.shop_name).text = coffeeShop.first.name
+            itemView.findViewById<TextView>(R.id.shop_metadata_simple).text = getMetaString(coffeeShop)
+            itemView.findViewById<TextView>(R.id.distance).text = getDistance(coffeeShop.second)
         }
+
+        private fun getMetaString(coffeeShop: Pair<CoffeeShop, Double>): String {
+            val context = itemView.context
+            return String.format(
+                context.getString(R.string.plugin),
+                getStatusSymbol(context,coffeeShop.first.socket)
+            ) + ", " + (context.getString(R.string.wifi) + coffeeShop.first.wifi)
+        }
+
+        private fun getStatusSymbol(context: Context, input:String?): String =
+            when (input) {
+                "yes" -> context.getString(R.string.yes)
+                "no" -> context.getString(R.string.no)
+                "maybe" -> context.getString(R.string.maybe)
+                else -> context.getString(R.string.unkonwn)
+            }
+
 
         private fun getDistance(second: Double): String {
             if (second < 1000) {
-                return "(" + second.toInt().toString() + "m)"
+                return second.toInt().toString() + "m"
             } else {
-                return "(" + ((second * 10).toInt().toDouble() / 10000).toString() + "km)"
+                return (((second).toInt()) / 1000).toString() + "km"
             }
         }
     }
