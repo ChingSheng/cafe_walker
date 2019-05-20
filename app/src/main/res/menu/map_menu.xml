@@ -13,7 +13,6 @@
             <item android:id="@+id/miaoli"
                   android:title="@string/miaoli"/>
         </menu>
-
     </item>
 
     <item android:id="@+id/location_middle" android:title="@string/location_middle">
