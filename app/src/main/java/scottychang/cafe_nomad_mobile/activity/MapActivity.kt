@@ -11,10 +11,10 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.PopupMenu
 import android.widget.Toast
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -43,8 +43,8 @@ class MapActivity : AppCompatActivity() {
     private val floatingButton: FloatingActionButton by bindView(R.id.floating_button)
     private val loading: FrameLayout by bindView(R.id.loading)
 
-    lateinit var coffeeShopsViewModel: CoffeeShopsViewModel
-    lateinit var positioningViewModel: PositioningViewModel
+    private lateinit var coffeeShopsViewModel: CoffeeShopsViewModel
+    private lateinit var positioningViewModel: PositioningViewModel
 
     companion object {
         fun go(context: Context) {
@@ -62,7 +62,6 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
-
         initMapZoomInSpec()
         initMapTileSource()
 
@@ -75,6 +74,20 @@ class MapActivity : AppCompatActivity() {
         coffeeShopsViewModel.loading.observe(this, Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
 
         floatingButton.setOnClickListener { positioningViewModel.reloadFromGps() }
+        floatingButton.setOnLongClickListener { createPopupMenu(it) }
+    }
+
+    private fun createPopupMenu(view: View?):Boolean {
+        val popupMenu = PopupMenu(this@MapActivity, view!!)
+        popupMenu.menuInflater.inflate(R.menu.map_menu, popupMenu.menu)
+        popupMenu.menu.findItem(R.id.location_north).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_middle).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_south).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_east).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_isolated).subMenu.clearHeader()
+        popupMenu.setOnMenuItemClickListener { view -> this@MapActivity.onMenuItemSelected(view!!) }
+        popupMenu.show()
+        return true
     }
 
     private fun setCenter(t: LatLng?) {
@@ -133,15 +146,7 @@ class MapActivity : AppCompatActivity() {
     // Menu
     //================================================================================
 
-    lateinit var menu: Menu
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.map_menu, menu)
-        this.menu = menu
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    fun onMenuItemSelected(item: MenuItem): Boolean  {
         when (item.itemId) {
             R.id.taipei -> TwCity.TAIPEI
             R.id.keelung -> TwCity.KEELUNG
