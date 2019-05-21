@@ -15,13 +15,13 @@ class SharePrefRepository {
         }
     }
 
-    fun save(context: Context, twCity: TwCity) {
+    fun saveCity(context: Context, twCity: TwCity) {
         val editor = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).edit()
         editor.putInt(KEY_CITY, twCity.ordinal)
         editor.apply()
     }
 
-    fun load(context: Context): TwCity {
+    fun loadCity(context: Context): TwCity {
         val sharedPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
         val index = sharedPreferences.getInt(KEY_CITY, -1)
         return if (index >= 0) TwCity.values()[index] else TwCity.UNKNOWN

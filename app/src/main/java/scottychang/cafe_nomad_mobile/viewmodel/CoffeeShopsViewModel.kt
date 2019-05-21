@@ -23,14 +23,14 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
     private set
 
     init {
-        var city = SharePrefRepository.getInstance().load(getApplication())
+        var city = SharePrefRepository.getInstance().loadCity(getApplication())
         if (city == TwCity.UNKNOWN) city = PositioningRepository.getNearestCity(application)
         setCoffeeShopsCity(city)
     }
 
     fun setCoffeeShopsCity(twCity: TwCity) {
         this.twCity = twCity
-        SharePrefRepository.getInstance().save(getApplication(), twCity)
+        SharePrefRepository.getInstance().saveCity(getApplication(), twCity)
 
         loading.postValue(true)
         CoffeeShopRepository.getInstance(getApplication())
