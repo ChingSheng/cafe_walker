@@ -1,6 +1,7 @@
 package scottychang.cafe_nomad_mobile.repositiory
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
@@ -12,11 +13,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import scottychang.cafe_nomad_mobile.MyCallback
+import scottychang.cafe_nomad_mobile.R
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import scottychang.cafe_nomad_mobile.server.CafeNomadApi
 import java.io.File
 import java.io.FileReader
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
+
+
 
 
 class CoffeeShopRepository(private val context: Context) {
@@ -52,7 +57,8 @@ class CoffeeShopRepository(private val context: Context) {
     }
 
     fun loadCoffeeShops(city: String, callback: MyCallback<List<CoffeeShop>>?) {
-        if (hasValidCache(city)) {
+        val file = File(getFilePath(city))
+        if (file.exists() && (createdBelowOneHour(file) || !isNetworkAvailable())) {
             val reader = JsonReader(FileReader(getFilePath(city)))
             val type = object : TypeToken<ArrayList<CoffeeShop>>() {}.type
             val data = Gson().fromJson<List<CoffeeShop>>(reader, type)
@@ -66,7 +72,8 @@ class CoffeeShopRepository(private val context: Context) {
                 }
 
                 override fun onFailure(call: Call<List<CoffeeShop>>, t: Throwable) {
-                    callback?.onFailure(t as Exception)
+                    val error = if (t is UnknownHostException) Exception(context.getString(R.string.network_error)) else t as Exception
+                    callback?.onFailure(error)
                 }
             })
         }
@@ -82,12 +89,13 @@ class CoffeeShopRepository(private val context: Context) {
         }
     }
 
-    private fun hasValidCache(city: String): Boolean {
-        val file = File(getFilePath(city))
-        return file.exists() && belowOneHour(file)
-    }
+    private fun createdBelowOneHour(file: File) = ((System.currentTimeMillis() - file.lastModified()) / 1000 / 60) < 60
 
-    private fun belowOneHour(file: File) = ((System.currentTimeMillis() - file.lastModified()) / 1000 / 60) < 60
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
+    }
 
     private fun getFilePath(fileName : String): String {
         return context.getFilesDir().getPath().toString() + "/" + fileName + ".json"
