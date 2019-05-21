@@ -21,9 +21,6 @@ import java.io.FileReader
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
-
-
-
 class CoffeeShopRepository(private val context: Context) {
     private val url = "https://cafenomad.tw/api/v1.2/cafes/"
     private val timeoutSecond = 30L
