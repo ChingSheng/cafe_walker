@@ -10,6 +10,7 @@ import scottychang.cafe_nomad_mobile.model.TwCity
 import scottychang.cafe_nomad_mobile.repositiory.CoffeeShopRepository
 import scottychang.cafe_nomad_mobile.repositiory.PositioningRepository
 import scottychang.cafe_nomad_mobile.repositiory.SharePrefRepository
+import java.util.*
 
 class CoffeeShopsViewModel(application: Application) : AndroidViewModel(application) {
     var coffeeShops = MutableLiveData<List<Pair<CoffeeShop, Double>>>()
@@ -37,6 +38,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
                 override fun onFailure(exception: Exception) {
                     loading.postValue(false)
                     exceptions.postValue(exception)
+                    coffeeShops.postValue(Collections.emptyList())
                 }
 
                 override fun onSuccess(result: List<CoffeeShop>) {
