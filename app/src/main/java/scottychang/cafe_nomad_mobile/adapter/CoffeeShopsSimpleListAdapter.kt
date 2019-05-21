@@ -63,7 +63,7 @@ class CoffeeShopsSimpleListAdapter(
             ) + ", " + (context.getString(R.string.wifi) + coffeeShop.first.wifi)
         }
 
-        private fun getStatusSymbol(context: Context, input:String?): String =
+        private fun getStatusSymbol(context: Context, input: String?): String =
             when (input) {
                 "yes" -> context.getString(R.string.yes)
                 "no" -> context.getString(R.string.no)
@@ -76,7 +76,7 @@ class CoffeeShopsSimpleListAdapter(
             if (second < 1000) {
                 return second.toInt().toString() + "m"
             } else {
-                return (((second).toInt()) / 1000).toString() + "km"
+                return String.format("%.1f", second/1000) + "km"
             }
         }
     }
