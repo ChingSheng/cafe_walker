@@ -2,7 +2,7 @@ package scottychang.cafe_nomad_mobile.data
 
 import scottychang.cafe_nomad_mobile.model.LatLng
 import scottychang.cafe_nomad_mobile.model.TwCity
-
+/* From https://byronhu.wordpress.com/2013/09/09/%E5%8F%B0%E7%81%A3%E7%B8%A3%E5%B8%82%E7%B6%93%E7%B7%AF%E5%BA%A6/ */
 class CityLatLng {
     companion object {
         val data = mutableMapOf(
