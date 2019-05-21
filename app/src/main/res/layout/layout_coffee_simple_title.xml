@@ -9,7 +9,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/size_64dp"
-            android:layout_marginStart="@dimen/size_32dp"
+            android:layout_marginStart="@dimen/size_16dp"
             android:gravity="center_vertical"
             android:textSize="16sp"
             android:textColor="@color/colorPrimaryText"
