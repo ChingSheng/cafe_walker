@@ -17,10 +17,10 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
     var exceptions = MutableLiveData<Exception>()
     var loading = MutableLiveData<Boolean>()
 
-    var twCity : TwCity = TwCity.UNKNOWN
-    private set
+    var twCity: TwCity = TwCity.UNKNOWN
+        private set
     var current = ArrayList<CoffeeShop>()
-    private set
+        private set
 
     init {
         var city = SharePrefRepository.getInstance().loadCity(getApplication())
@@ -52,8 +52,22 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
             })
     }
 
-    fun updateNearestByLatLng (latlng:LatLng) {
-        val pairs = current.associate { item -> Pair(item, PositioningRepository.getDistance(latlng, LatLng(item.latitude?.toDouble()?:.0, item.longitude?.toDouble()?:.0))) }
-        coffeeShops.postValue(pairs.toList().sortedBy { (_, value) -> value }.subList(0, Math.min(50, pairs.size)))
+    private fun updateNearestByLatLng(position: LatLng) {
+        val coffeeDistancePair = current.associate { coffeeShop ->
+            Pair(
+                coffeeShop,
+                PositioningRepository.getDistance(position, getLatLng(coffeeShop))
+            )
+        }
+        coffeeShops.postValue(
+            coffeeDistancePair.toList().sortedBy { (_, distance) -> distance }.subList(
+                0,
+                Math.min(50, coffeeDistancePair.size)
+            )
+        )
+    }
+
+    private fun getLatLng(coffeeShop: CoffeeShop): LatLng {
+        return LatLng(coffeeShop.latitude?.toDouble() ?: .0, coffeeShop.longitude?.toDouble() ?: .0)
     }
 }
