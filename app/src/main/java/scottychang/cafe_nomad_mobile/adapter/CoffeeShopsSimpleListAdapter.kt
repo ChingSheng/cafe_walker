@@ -20,9 +20,13 @@ class CoffeeShopsSimpleListAdapter(
     private val TITLE_TYPE = 0
     private val ITEM_TYPE = 1
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        BottomSheetBehavior.from(recyclerView).setBottomSheetCallback(bottomSheetBehaviorCallback)
+    }
+
     override fun getItemCount(): Int {
-        val x = data?.size?.plus(1) ?: 1
-        return x
+        return data?.size?.plus(1) ?: 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -71,7 +75,6 @@ class CoffeeShopsSimpleListAdapter(
                 else -> context.getString(R.string.unkonwn)
             }
 
-
         private fun getDistance(second: Double): String {
             if (second < 1000) {
                 return second.toInt().toString() + "m"
@@ -87,23 +90,20 @@ class CoffeeShopsSimpleListAdapter(
         }
     }
 
-    fun getBottomSheetCallback(): BottomSheetBehavior.BottomSheetCallback {
-        return object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+    private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            // Do nothing
+        }
 
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                bottomSheet as RecyclerView
-                bottomSheet.findViewHolderForAdapterPosition(0)?.let {
-                    val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
-                    when (newState) {
-                        BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
-                        BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
-                    }
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            bottomSheet as RecyclerView
+            bottomSheet.findViewHolderForAdapterPosition(0)?.let {
+                val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
+                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
                 }
             }
         }
-
     }
 }

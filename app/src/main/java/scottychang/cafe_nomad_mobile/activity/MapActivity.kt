@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -98,13 +97,10 @@ class MapActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         itemsView.layoutManager = LinearLayoutManager(this)
-        val adapter  = CoffeeShopsSimpleListAdapter(
+        itemsView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
             coffeeShopsViewModel.coffeeShops.value,
             { position: Int -> focusByModelPosition(position) })
-
-        BottomSheetBehavior.from(itemsView).setBottomSheetCallback(adapter.getBottomSheetCallback())
-        itemsView.adapter = adapter
     }
 
     private fun focusByModelPosition(position: Int) {
