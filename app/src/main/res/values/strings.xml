@@ -34,4 +34,6 @@
     <string name="no">\u0058</string>
     <string name="unkonwn">\u2753</string>
     <string name="network_error">網路異常，請檢查你的網路連線狀態</string>
+    <string name="first_launch_msg">第一次啟動的朋友你好，長按定位鈕可以更改城市</string>
+    <string name="first_launch_button_text">我知道了</string>
 </resources>

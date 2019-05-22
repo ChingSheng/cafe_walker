@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -31,6 +32,7 @@ import scottychang.cafe_nomad_mobile.viewmodel.CoffeeShopsViewModel
 import scottychang.cafe_nomad_mobile.viewmodel.PositioningViewModel
 
 class MapActivity : AppCompatActivity() {
+
     private val MAX_ZOOM_IN_LEVEL = 20.0
     private val MIN_ZOOM_IN_LEVEL = 11.0
     private val DEFAULT_ZOOM_IN_LEVEL = 16.0
@@ -46,8 +48,10 @@ class MapActivity : AppCompatActivity() {
     private lateinit var positioningViewModel: PositioningViewModel
 
     companion object {
-        fun go(context: Context) {
+        private val SHOW_INTRODUCTION_DIALOG = "show_dialog"
+        fun go(context: Context, showIntroductionDialog: Boolean) {
             val intent = Intent(context, MapActivity::class.java)
+            intent.putExtra(SHOW_INTRODUCTION_DIALOG, showIntroductionDialog)
             context.startActivity(intent)
         }
     }
@@ -61,6 +65,7 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+        showIntroductionDialogIfNeeded()
         initMapZoomInSpec()
         initMapTileSource()
 
@@ -74,6 +79,18 @@ class MapActivity : AppCompatActivity() {
 
         floatingButton.setOnClickListener { positioningViewModel.reloadFromGps() }
         floatingButton.setOnLongClickListener { createPopupMenu(it) }
+    }
+
+    private fun showIntroductionDialogIfNeeded() {
+        val shouldShowDialog = intent?.getBooleanExtra(SHOW_INTRODUCTION_DIALOG, false)
+        shouldShowDialog?.let { showDialog ->
+            if (showDialog) {
+                val builder = AlertDialog.Builder(this, R.style.Theme_AppCompat_DayNight_Dialog)
+                builder.setMessage(R.string.first_launch_msg)
+                builder.setPositiveButton(R.string.first_launch_button_text, null)
+                builder.create().show()
+            }
+        }
     }
 
     private fun createPopupMenu(view: View?):Boolean {
@@ -99,13 +116,14 @@ class MapActivity : AppCompatActivity() {
         itemsView.layoutManager = LinearLayoutManager(this)
         itemsView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
-            coffeeShopsViewModel.coffeeShops.value,
-            { position: Int -> focusByModelPosition(position) })
+            coffeeShopsViewModel.coffeeShops.value
+        ) { position: Int -> focusByModelPosition(position) }
     }
 
     private fun focusByModelPosition(position: Int) {
-        val coffeeShop = coffeeShopsViewModel.coffeeShops.value?.get(position)
-        val startPoint = GeoPoint(coffeeShop?.first?.latitude?.toDouble() ?: .0, coffeeShop?.first?.longitude?.toDouble() ?: .0)
+        val coffeeShopPair = coffeeShopsViewModel.coffeeShops.value?.get(position)
+        val latLng = coffeeShopsViewModel.getLatLng(coffeeShopPair!!.first)
+        val startPoint = GeoPoint(latLng.latitude, latLng.longitude)
         mapController.setCenter(startPoint)
     }
 
@@ -123,8 +141,8 @@ class MapActivity : AppCompatActivity() {
     private fun initMapZoomInSpec() {
         mapView.setMultiTouchControls(true)
         mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        mapView.setMaxZoomLevel(MAX_ZOOM_IN_LEVEL)
-        mapView.setMinZoomLevel(MIN_ZOOM_IN_LEVEL)
+        mapView.maxZoomLevel = MAX_ZOOM_IN_LEVEL
+        mapView.minZoomLevel = MIN_ZOOM_IN_LEVEL
         mapController.setZoom(DEFAULT_ZOOM_IN_LEVEL)
     }
 

@@ -19,7 +19,7 @@ class PermissionCheckActivity : AppCompatActivity() {
         if (!hasPermissions()) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL)
         } else {
-            MapActivity.go(this)
+            MapActivity.go(this, false)
         }
     }
 
@@ -40,6 +40,6 @@ class PermissionCheckActivity : AppCompatActivity() {
                 return
             }
         }
-        MapActivity.go(this)
+        MapActivity.go(this, true)
     }
 }
