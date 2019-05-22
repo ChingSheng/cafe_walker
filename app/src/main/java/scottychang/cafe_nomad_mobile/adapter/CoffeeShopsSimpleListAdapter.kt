@@ -75,14 +75,14 @@ class CoffeeShopsSimpleListAdapter(
                 else -> context.getString(R.string.unkonwn)
             }
 
-        private fun getDistance(second: Double): String {
+        private fun getDistance(second: Double): String =
             if (second < 1000) {
-                return second.toInt().toString() + "m"
+                second.toInt().toString() + "m"
             } else {
-                return String.format("%.1f", second/1000) + "km"
+                String.format("%.1f", second / 1000) + "km"
             }
-        }
     }
+
 
     class CoffeeShopTitleViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun onBind(title: String) {
