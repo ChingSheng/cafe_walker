@@ -10,4 +10,8 @@
     <dimen name="item_height">80dp</dimen>
     <dimen name="recycler_view_height">340dp</dimen>
 
+    <dimen name="text_size_20sp">20sp</dimen>
+    <dimen name="text_size_18sp">18sp</dimen>
+    <dimen name="text_size_16sp">16sp</dimen>
+    <dimen name="text_size_14sp">14sp</dimen>
 </resources>

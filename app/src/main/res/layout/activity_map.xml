@@ -18,7 +18,6 @@
             android:id="@+id/items"
             android:layout_width="match_parent"
             android:layout_height="@dimen/recycler_view_height"
-            android:background="@android:color/white"
             app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
             app:behavior_peekHeight="@dimen/size_64dp"
             app:behavior_hideable="false"
