@@ -11,6 +11,7 @@ import scottychang.cafe_nomad_mobile.repositiory.CoffeeShopRepository
 import scottychang.cafe_nomad_mobile.repositiory.PositioningRepository
 import scottychang.cafe_nomad_mobile.repositiory.SharePrefRepository
 import java.util.*
+import kotlin.collections.HashMap
 
 class CoffeeShopsViewModel(application: Application) : AndroidViewModel(application) {
     var coffeeShops = MutableLiveData<List<Pair<CoffeeShop, Double>>>()
@@ -19,7 +20,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
 
     var twCity: TwCity = TwCity.UNKNOWN
         private set
-    var current = ArrayList<CoffeeShop>()
+    var current :Map<String ,CoffeeShop> = HashMap()
         private set
 
     init {
@@ -43,20 +44,17 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
 
                 override fun onSuccess(result: List<CoffeeShop>) {
                     loading.postValue(false)
-                    if (current != result) {
-                        current.clear()
-                        current.addAll(result)
-                    }
+                    current = result.associate { it.id to it }.toMap()
                     updateNearestByLatLng(PositioningRepository.loadLatlng(getApplication()))
                 }
             })
     }
 
     private fun updateNearestByLatLng(position: LatLng) {
-        val coffeeDistancePair = current.associate { coffeeShop ->
+        val coffeeDistancePair = current.map { item ->
             Pair(
-                coffeeShop,
-                PositioningRepository.getDistance(position, getLatLng(coffeeShop))
+                item.value,
+                PositioningRepository.getDistance(position, getLatLng(item.value))
             )
         }
         coffeeShops.postValue(
