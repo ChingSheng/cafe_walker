@@ -11,6 +11,10 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import me.imid.swipebacklayout.lib.SwipeBackLayout
+import me.imid.swipebacklayout.lib.Utils
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 import scottychang.cafe_nomad_mobile.R
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import scottychang.cafe_nomad_mobile.viewmodel.CoffeeShopsViewModel
@@ -19,8 +23,10 @@ import java.net.URLDecoder
 
 
 
-class ShopDetailActivity : AppCompatActivity() {
+class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
     private val googleMapPackage = "com.google.android.apps.maps"
+
+    fun <T:View> bindView(@IdRes resId: Int): Lazy<T> = lazy { findViewById<T>(resId) }
 
     private val button : FloatingActionButton by bindView(R.id.location)
     private val name: TextView by bindView(R.id.name)
@@ -38,7 +44,7 @@ class ShopDetailActivity : AppCompatActivity() {
     private val ratingMusic: TextView by bindView(R.id.music)
     private val openingTime: TextView by bindView(R.id.opening_time)
 
-    fun <T : View> bindView(@IdRes resId: Int): Lazy<T> = lazy { findViewById<T>(resId) }
+    private var mHelper: SwipeBackActivityHelper? = null
 
     companion object {
         val KEY_ID = "id"
@@ -52,9 +58,41 @@ class ShopDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_detail)
+        initSwipeBackActivityHelper()
 
         val coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
+        initViewDataByIntent(coffeeShopsViewModel)
+    }
 
+    private fun initSwipeBackActivityHelper() {
+        mHelper = SwipeBackActivityHelper(this)
+        mHelper!!.onActivityCreate()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        mHelper!!.onPostCreate()
+    }
+
+    override fun <T : View?> findViewById(id: Int): T {
+        val v = super.findViewById<View>(id) as T
+        return if (v == null && mHelper != null) mHelper!!.findViewById(id) as T else v
+    }
+
+    override fun getSwipeBackLayout(): SwipeBackLayout {
+        return mHelper!!.swipeBackLayout
+    }
+
+    override fun setSwipeBackEnable(enable: Boolean) {
+        swipeBackLayout.setEnableGesture(enable)
+    }
+
+    override fun scrollToFinishActivity() {
+        Utils.convertActivityToTranslucent(this)
+        swipeBackLayout.scrollToFinishActivity()
+    }
+
+    private fun initViewDataByIntent(coffeeShopsViewModel: CoffeeShopsViewModel) {
         intent.getStringExtra(KEY_ID)?.let {
             coffeeShopsViewModel.current.get(it)?.let { coffeeShop: CoffeeShop ->
                 name.text = coffeeShop.name
@@ -75,44 +113,6 @@ class ShopDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSocket(data: String?) {
-        if (valid(data) && validState(data!!)) {
-            socket.text = getString(R.string.socket, when(data) {
-                "yes" -> getString(R.string.socket_yes)
-                "no" -> getString(R.string.socket_no)
-                "maybe" -> getString(R.string.socket_maybe)
-                else -> ""
-            })
-        } else {
-            socket.visibility = View.GONE
-        }
-    }
-
-    private fun initLimitTime(data: String?) {
-        if (valid(data) && validState(data!!)) {
-            limitTime.text = getString(R.string.limit_time, when(data) {
-                "yes" -> getString(R.string.limit_time_yes)
-                "no" -> getString(R.string.limit_time_no)
-                "maybe" -> getString(R.string.limit_time_maybe)
-                else -> ""
-            })
-        } else {
-            limitTime.visibility = View.GONE
-        }
-    }
-
-    private fun initStanding(data: String?) {
-        if (valid(data) && data.equals("yes")) {
-            socket.text = getString(R.string.standing_yes)
-        } else {
-            standing.visibility = View.GONE
-        }
-    }
-
-    private fun validState(data: String): Boolean {
-        return data.equals("yes") || data.equals("no") || data.equals("maybe")
-    }
-
     private fun buttonClickListener(coffeeShop: CoffeeShop): View.OnClickListener {
         return View.OnClickListener {
             val s = "geo:%s,%s?q=%s".format(coffeeShop.latitude.toString(), coffeeShop.longitude.toString(), coffeeShop.name)
@@ -123,20 +123,42 @@ class ShopDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSite(site: String?) {
-        if (valid(site)) {
-            val afterDecode = URLDecoder.decode(site, "UTF-8")
-            this.site.text = afterDecode
-            this.site.paint.flags = Paint.UNDERLINE_TEXT_FLAG
-            this.site.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(site))
-                    startActivity(intent)
-                }
-            })
+    private fun initSocket(data: String?) {
+        if (valid(data) && validState(data!!)) {
+            socket.text = when(data) {
+                "yes" -> getString(R.string.socket_yes)
+                "no" -> getString(R.string.socket_no)
+                "maybe" -> getString(R.string.socket_maybe)
+                else -> getString(R.string.no_data)
+            }
         } else {
-            this.site.visibility = View.GONE
+            socket.visibility = View.GONE
         }
+    }
+
+    private fun initLimitTime(data: String?) {
+        if (valid(data) && validState(data!!)) {
+            limitTime.text = when(data) {
+                "yes" -> getString(R.string.limit_time_yes)
+                "no" -> getString(R.string.limit_time_no)
+                "maybe" -> getString(R.string.limit_time_maybe)
+                else -> getString(R.string.no_data)
+            }
+        } else {
+            limitTime.visibility = View.GONE
+        }
+    }
+
+    private fun initStanding(data: String?) {
+        if (valid(data) && data.equals("yes")) {
+            standing.text = getString(R.string.standing_yes)
+        } else {
+            standing.visibility = View.GONE
+        }
+    }
+
+    private fun validState(data: String): Boolean {
+        return data.equals("yes") || data.equals("no") || data.equals("maybe")
     }
 
     private fun initMRT(data: String?) {
@@ -144,6 +166,17 @@ class ShopDetailActivity : AppCompatActivity() {
             mrt.text = if (data!!.length > 8) getString(R.string.info_arrival, data) else getString(R.string.info_mrt, data)
         } else {
             mrt.visibility = View.GONE
+        }
+    }
+
+    private fun initSite(site: String?) {
+        if (valid(site)) {
+            val afterDecode = URLDecoder.decode(site, "UTF-8")
+            this.site.text = afterDecode
+            this.site.paint.flags = Paint.UNDERLINE_TEXT_FLAG
+            this.site.setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(site))) }
+        } else {
+            this.site.visibility = View.GONE
         }
     }
 
@@ -160,8 +193,5 @@ class ShopDetailActivity : AppCompatActivity() {
         openingTime.text = if (valid(openTime)) openTime else getString(R.string.no_data)
     }
 
-    private fun valid(input: String?): Boolean = input != null && input.length > 0
-
-
-
+    private fun valid(input: String?): Boolean = input != null && input.isNotEmpty()
 }
