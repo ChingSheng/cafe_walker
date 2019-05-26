@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <View
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/shop_detail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@color/colorSecondary"/>
+
+        <ScrollView
+                android:id="@+id/shop_detail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/recycler_view_height"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_insetEdge="bottom"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <include layout="@layout/layout_shop_detail"/>
+
+        </ScrollView>
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gmap"
+            android:layout_marginEnd="16dp"
+            app:layout_anchorGravity="bottom|end"
+
+            app:layout_anchor="@+id/map"/>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -18,8 +18,4 @@ class PositioningViewModel(application: Application) : AndroidViewModel(applicat
         val positioning = PositioningRepository.loadLatlng(getApplication())
         latLng.postValue(positioning)
     }
-
-    fun setByLatLng(x: LatLng) {
-        latLng.postValue(x)
-    }
 }

@@ -16,10 +16,14 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name="scottychang.cafe_nomad_mobile.activity.MapActivity"/>
+        <activity android:name="scottychang.cafe_nomad_mobile.activity.ShopDetailActivity"/>
         <activity android:name="scottychang.cafe_nomad_mobile.activity.PermissionCheckActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
 

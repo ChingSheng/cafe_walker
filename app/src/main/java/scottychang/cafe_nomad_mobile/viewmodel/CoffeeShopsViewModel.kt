@@ -50,7 +50,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
             })
     }
 
-    private fun updateNearestByLatLng(position: LatLng) {
+    fun updateNearestByLatLng(position: LatLng) {
         val coffeeDistancePair = current.map { item ->
             Pair(
                 item.value,

@@ -32,7 +32,6 @@ import scottychang.cafe_nomad_mobile.viewmodel.CoffeeShopsViewModel
 import scottychang.cafe_nomad_mobile.viewmodel.PositioningViewModel
 
 class MapActivity : AppCompatActivity() {
-
     private val MAX_ZOOM_IN_LEVEL = 20.0
     private val MIN_ZOOM_IN_LEVEL = 11.0
     private val DEFAULT_ZOOM_IN_LEVEL = 16.0
@@ -77,7 +76,10 @@ class MapActivity : AppCompatActivity() {
         coffeeShopsViewModel.exceptions.observe(this, Observer { Toast.makeText(this, it?.message ?: "UnknownError", Toast.LENGTH_LONG).show() })
         coffeeShopsViewModel.loading.observe(this, Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
 
-        floatingButton.setOnClickListener { positioningViewModel.reloadFromGps() }
+        floatingButton.setOnClickListener {
+            positioningViewModel.reloadFromGps()
+            coffeeShopsViewModel.updateNearestByLatLng(positioningViewModel.latLng.value!!)
+        }
         floatingButton.setOnLongClickListener { createPopupMenu(it) }
     }
 
@@ -122,9 +124,7 @@ class MapActivity : AppCompatActivity() {
 
     private fun focusByModelPosition(position: Int) {
         val coffeeShopPair = coffeeShopsViewModel.coffeeShops.value?.get(position)
-        val latLng = coffeeShopsViewModel.getLatLng(coffeeShopPair!!.first)
-        val startPoint = GeoPoint(latLng.latitude, latLng.longitude)
-        mapController.setCenter(startPoint)
+        ShopDetailActivity.go(this, coffeeShopPair!!.first.id)
     }
 
     private fun initMapTileSource() {

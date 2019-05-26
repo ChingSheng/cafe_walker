@@ -6,6 +6,7 @@
     <dimen name="size_32dp">32dp</dimen>
     <dimen name="size_48dp">48dp</dimen>
     <dimen name="size_64dp">64dp</dimen>
+    <dimen name="size_80dp">80dp</dimen>
 
     <dimen name="item_height">80dp</dimen>
     <dimen name="recycler_view_height">340dp</dimen>
@@ -14,4 +15,5 @@
     <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="text_size_16sp">16sp</dimen>
     <dimen name="text_size_14sp">14sp</dimen>
+    <dimen name="text_size_12sp">12sp</dimen>
 </resources>

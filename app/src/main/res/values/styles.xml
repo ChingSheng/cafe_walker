@@ -8,4 +8,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DividerBlack" parent="BaseDivider">
+        <item name="android:background">@android:color/black</item>
+    </style>
+
+    <style name="DividerGray" parent="BaseDivider">
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="BaseDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">@dimen/size_8dp</item>
+    </style>
+
 </resources>
