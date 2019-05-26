@@ -23,6 +23,7 @@ class CoffeeShopsSimpleListAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         BottomSheetBehavior.from(recyclerView).setBottomSheetCallback(bottomSheetBehaviorCallback)
+        BottomSheetBehavior.from(recyclerView).state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun getItemCount(): Int {
@@ -62,7 +63,7 @@ class CoffeeShopsSimpleListAdapter(
         private fun getMetaString(coffeeShop: Pair<CoffeeShop, Double>): String {
             val context = itemView.context
             return String.format(
-                context.getString(R.string.plugin),
+                context.getString(R.string.socket),
                 getStatusSymbol(context,coffeeShop.first.socket)
             ) + ", " + (context.getString(R.string.wifi) + coffeeShop.first.wifi)
         }
