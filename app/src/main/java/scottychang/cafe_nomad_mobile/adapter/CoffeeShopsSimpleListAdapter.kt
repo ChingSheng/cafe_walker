@@ -23,7 +23,6 @@ class CoffeeShopsSimpleListAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         BottomSheetBehavior.from(recyclerView).setBottomSheetCallback(bottomSheetBehaviorCallback)
-        BottomSheetBehavior.from(recyclerView).state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun getItemCount(): Int {
@@ -101,8 +100,8 @@ class CoffeeShopsSimpleListAdapter(
             bottomSheet.findViewHolderForAdapterPosition(0)?.let {
                 val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
                 when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_down)
-                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.bottom_sheet_slide_up)
+                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.down)
+                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.up)
                 }
             }
         }

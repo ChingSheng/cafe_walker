@@ -28,11 +28,10 @@
     <string name="wifi">Wifi: </string>
     <string name="socket_yes">有插座</string>
     <string name="socket_no">無插座</string>
-    <string name="socket_maybe">看座位</string>
-    <string name="limit_time">有無限時： %1$s</string>
+    <string name="socket_maybe">部分座位有插座</string>
     <string name="limit_time_yes">一律限時</string>
     <string name="limit_time_no">無限時</string>
-    <string name="limit_time_maybe">看情況，假日或客滿限時</string>
+    <string name="limit_time_maybe">視情況限時(假日或客滿)</string>
     <string name="standing_yes">可站立工作</string>
     <string name="yes">\u25cb</string>
     <string name="maybe">\u25b3</string>
