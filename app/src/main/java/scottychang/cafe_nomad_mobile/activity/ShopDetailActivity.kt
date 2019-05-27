@@ -171,10 +171,15 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
 
     private fun initSite(site: String?) {
         if (valid(site)) {
-            val afterDecode = URLDecoder.decode(site, "UTF-8")
+            var afterDecode = URLDecoder.decode(site, "UTF-8")
             this.site.text = afterDecode
             this.site.paint.flags = Paint.UNDERLINE_TEXT_FLAG
-            this.site.setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(site))) }
+            this.site.setOnClickListener {
+                if (!afterDecode.startsWith("http")) {
+                    afterDecode = "https://$afterDecode"
+                }
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(afterDecode)))
+            }
         } else {
             this.site.visibility = View.GONE
         }
