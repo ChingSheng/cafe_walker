@@ -25,7 +25,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
 
     init {
         var city = SharePrefRepository.getInstance().loadCity(getApplication())
-        if (city == TwCity.UNKNOWN) city = PositioningRepository.getNearestCity(application)
+        if (city == TwCity.UNKNOWN) city = getNearestCity(application)
         setCoffeeShopsCity(city)
     }
 
@@ -54,15 +54,35 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         val coffeeDistancePair = current.map { item ->
             Pair(
                 item.value,
-                PositioningRepository.getDistance(position, getLatLng(item.value))
+                getDistance(position, getLatLng(item.value))
             )
         }
-        coffeeShops.postValue(
-            coffeeDistancePair.toList().sortedBy { (_, distance) -> distance }.subList(
-                0,
-                Math.min(50, coffeeDistancePair.size)
-            )
+        val result = coffeeDistancePair.toList().sortedBy { (_, distance) -> distance }.subList(
+            0,
+            Math.min(50, coffeeDistancePair.size)
         )
+        return result
+    }
+
+
+    private fun getNearestCity(context: Context): TwCity {
+        val current = PositioningRepository.loadLatLng(context)
+        var bestDistance = -.1
+        var city: TwCity = TwCity.UNKNOWN
+        for ((twCity, latlng) in CityLatLng.data) {
+            val distance = getDistance(latlng, current)
+            if (bestDistance < 0 || distance < bestDistance) {
+                bestDistance = distance
+                city = twCity
+            }
+        }
+        return city
+    }
+
+    private fun getDistance(point1: LatLng, point2: LatLng): Double {
+        val result = FloatArray(1)
+        Location.distanceBetween(point1.latitude, point1.longitude, point2.latitude, point2.longitude, result)
+        return result.get(0).toDouble()
     }
 
     fun getLatLng(coffeeShop: CoffeeShop): LatLng {
