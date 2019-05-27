@@ -15,7 +15,7 @@ class PositioningRepository() {
         var defaultLng = 121.5598
 
         @SuppressLint("MissingPermission")
-        fun loadLatlng(context: Context): LatLng {
+        fun loadLatLng(context: Context): LatLng {
             val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             var bestLocation: android.location.Location? = null
             for (provider in lm.allProviders) {

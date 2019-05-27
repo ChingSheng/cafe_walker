@@ -15,7 +15,7 @@ class PositioningViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun reloadFromGps() {
-        val positioning = PositioningRepository.loadLatlng(getApplication())
+        val positioning = PositioningRepository.loadLatLng(getApplication())
         latLng.postValue(positioning)
     }
 }
