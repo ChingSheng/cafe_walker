@@ -160,7 +160,20 @@ class MapActivity : AppCompatActivity() {
     // Menu
     //================================================================================
 
-    fun onMenuItemSelected(item: MenuItem): Boolean  {
+    private fun createPopupMenu(view: View?):Boolean {
+        val popupMenu = PopupMenu(this, view!!)
+        popupMenu.menuInflater.inflate(R.menu.map_menu, popupMenu.menu)
+        popupMenu.menu.findItem(R.id.location_north).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_middle).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_south).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_east).subMenu.clearHeader()
+        popupMenu.menu.findItem(R.id.location_isolated).subMenu.clearHeader()
+        popupMenu.setOnMenuItemClickListener { view -> this.onMenuItemSelected(view!!) }
+        popupMenu.show()
+        return true
+    }
+
+    private fun onMenuItemSelected(item: MenuItem): Boolean  {
         when (item.itemId) {
             R.id.taipei -> TwCity.TAIPEI
             R.id.keelung -> TwCity.KEELUNG
@@ -181,8 +194,8 @@ class MapActivity : AppCompatActivity() {
             R.id.penghu -> TwCity.PENGHU
             R.id.lienchiang -> TwCity.LIENCHIANG
             else -> null
-        }?.let {
-            coffeeShopsViewModel.setCoffeeShopsCity(it)
+        }?.let { city: TwCity ->
+            coffeeShopsViewModel.setCoffeeShopsCity(city)
         }
         return true
     }
