@@ -3,7 +3,10 @@ package scottychang.cafe_nomad_mobile.viewmodel
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
+import android.location.Location
 import scottychang.cafe_nomad_mobile.MyCallback
+import scottychang.cafe_nomad_mobile.data.CityLatLng
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import scottychang.cafe_nomad_mobile.model.LatLng
 import scottychang.cafe_nomad_mobile.model.TwCity
