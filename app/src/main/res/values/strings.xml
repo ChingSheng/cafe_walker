@@ -25,7 +25,8 @@
     <string name="lienchiang">連江</string>
     <string name="unknown_location">未知的地點</string>
     <string name="socket">插座: %1$s</string>
-    <string name="wifi">Wifi: </string>
+    <string name="wifi">Wifi: %1$.1f</string>
+    <string name="cheap">價格平實: %1$.1f</string>
     <string name="socket_yes">有插座</string>
     <string name="socket_no">無插座</string>
     <string name="socket_maybe">部分座位有插座</string>
@@ -33,10 +34,9 @@
     <string name="limit_time_no">無限時</string>
     <string name="limit_time_maybe">視情況限時(假日或客滿)</string>
     <string name="standing_yes">可站立工作</string>
-    <string name="yes">\u25cb</string>
+    <string name="yes">\u25EF</string>
     <string name="maybe">\u25b3</string>
-    <string name="no">\u0058</string>
-    <string name="unkonwn">\u2753</string>
+    <string name="no">\u2573</string>
     <string name="network_error">網路異常，請檢查你的網路連線狀態</string>
     <string name="first_launch_msg">第一次啟動的朋友你好，長按定位鈕可以更改城市</string>
     <string name="title_rating">綜合評比</string>
@@ -48,7 +48,7 @@
     <string name="rating_wifi">Wifi穩定： %1$.1f\u2605</string>
     <string name="rating_seat">通常有位： %1$.1f\u2605</string>
     <string name="rating_tasty">咖啡好喝： %1$.1f\u2605</string>
-    <string name="rating_cheap">價格便宜： %1$.1f\u2605</string>
+    <string name="rating_cheap">價格平實： %1$.1f\u2605</string>
     <string name="rating_quiet">安靜程度： %1$.1f\u2605</string>
     <string name="rating_music">裝潢音樂： %1$.1f\u2605</string>
 </resources>

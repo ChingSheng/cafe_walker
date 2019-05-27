@@ -74,24 +74,59 @@ class CoffeeShopsSimpleListAdapter(
     class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun onBind(coffeeShop: Pair<CoffeeShop, Double>) {
             itemView.findViewById<TextView>(R.id.shop_name).text = coffeeShop.first.name
-            itemView.findViewById<TextView>(R.id.shop_metadata_simple).text = setMetaString(coffeeShop)
             itemView.findViewById<TextView>(R.id.distance).text = setDistance(coffeeShop.second)
+            setMetaData(coffeeShop)
+        }
+
+        private fun setMetaData(coffeeShop: Pair<CoffeeShop, Double>) {
+            val metadata = itemView.findViewById<TextView>(R.id.shop_metadata_simple)
+            metadata.text = setMetaString(coffeeShop)
+            metadata.visibility = if (metadata.text.length > 0) View.VISIBLE else View.GONE
         }
 
         private fun setMetaString(coffeeShop: Pair<CoffeeShop, Double>): String {
             val context = itemView.context
-            return String.format(
-                context.getString(R.string.socket),
-                getStatusSymbol(context,coffeeShop.first.socket)
-            ) + ", " + (context.getString(R.string.wifi) + coffeeShop.first.wifi)
+            return setPluginString(context, coffeeShop) +
+                    setWifiString(coffeeShop, context) +
+                    setPriceString(coffeeShop, context)
         }
 
-        private fun getStatusSymbol(context: Context, input: String?): String =
+        private fun setPriceString(
+            coffeeShop: Pair<CoffeeShop, Double>,
+            context: Context
+        ): String {
+            return (if (coffeeShop.first.cheap!! > 0) ("\t" + context.getString(
+                R.string.cheap,
+                coffeeShop.first.cheap
+            )) else "")
+        }
+
+        private fun setWifiString(
+            coffeeShop: Pair<CoffeeShop, Double>,
+            context: Context
+        ): String {
+            return (if (coffeeShop.first.wifi!! > 0) ("\t" + context.getString(
+                R.string.wifi,
+                coffeeShop.first.wifi
+            )) else "")
+        }
+
+        private fun setPluginString(
+            context: Context,
+            coffeeShop: Pair<CoffeeShop, Double>
+        ): String? {
+            return (if (getStatusSymbol(context, coffeeShop.first.socket) != null) (context.getString(
+                R.string.socket,
+                getStatusSymbol(context, coffeeShop.first.socket)
+            )) else "")
+        }
+
+        private fun getStatusSymbol(context: Context, input: String?): String? =
             when (input) {
                 "yes" -> context.getString(R.string.yes)
                 "no" -> context.getString(R.string.no)
                 "maybe" -> context.getString(R.string.maybe)
-                else -> context.getString(R.string.unkonwn)
+                else -> null
             }
 
         private fun setDistance(second: Double): String =
@@ -101,7 +136,6 @@ class CoffeeShopsSimpleListAdapter(
                 String.format("%.1f", second / 1000) + "km"
             }
     }
-
 
     class CoffeeShopTitleViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun onBind(title: String, @DrawableRes drawable: Int) {
@@ -116,8 +150,7 @@ class CoffeeShopsSimpleListAdapter(
         }
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            bottomSheet as RecyclerView
-            bottomSheet.findViewHolderForAdapterPosition(0)?.let {
+            (bottomSheet as RecyclerView).findViewHolderForAdapterPosition(0)?.let {
                 val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.down)
