@@ -17,13 +17,13 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class CoffeeShopsViewModel(application: Application) : AndroidViewModel(application) {
-    var coffeeShops = MutableLiveData<List<Pair<CoffeeShop, Double>>>()
+    var coffeeShops = MutableLiveData<List<CoffeeShop>>()
     var exceptions = MutableLiveData<Exception>()
     var loading = MutableLiveData<Boolean>()
 
     var twCity: TwCity = TwCity.UNKNOWN
         private set
-    var current :Map<String ,CoffeeShop> = HashMap()
+    var current: Map<String, CoffeeShop> = HashMap()
         private set
 
     init {
@@ -48,12 +48,12 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
                 override fun onSuccess(result: List<CoffeeShop>) {
                     loading.postValue(false)
                     current = result.associate { it.id to it }.toMap()
-                    updateNearestByLatLng(PositioningRepository.loadLatlng(getApplication()))
+                    coffeeShops.postValue(result)
                 }
             })
     }
 
-    fun updateNearestByLatLng(position: LatLng) {
+    fun getDistancePairFromPosition(position: LatLng): List<Pair<CoffeeShop, Double>> {
         val coffeeDistancePair = current.map { item ->
             Pair(
                 item.value,

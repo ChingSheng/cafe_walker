@@ -78,7 +78,7 @@ class MapActivity : AppCompatActivity() {
 
         floatingButton.setOnClickListener {
             positioningViewModel.reloadFromGps()
-            coffeeShopsViewModel.updateNearestByLatLng(positioningViewModel.latLng.value!!)
+            updateCoffeeShop()
         }
         floatingButton.setOnLongClickListener { createPopupMenu(it) }
     }
@@ -95,19 +95,6 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun createPopupMenu(view: View?):Boolean {
-        val popupMenu = PopupMenu(this@MapActivity, view!!)
-        popupMenu.menuInflater.inflate(R.menu.map_menu, popupMenu.menu)
-        popupMenu.menu.findItem(R.id.location_north).subMenu.clearHeader()
-        popupMenu.menu.findItem(R.id.location_middle).subMenu.clearHeader()
-        popupMenu.menu.findItem(R.id.location_south).subMenu.clearHeader()
-        popupMenu.menu.findItem(R.id.location_east).subMenu.clearHeader()
-        popupMenu.menu.findItem(R.id.location_isolated).subMenu.clearHeader()
-        popupMenu.setOnMenuItemClickListener { view -> this@MapActivity.onMenuItemSelected(view!!) }
-        popupMenu.show()
-        return true
-    }
-
     private fun setCenter(t: LatLng?) {
         val startPoint = GeoPoint(t?.latitude ?: .0, t?.longitude ?: .0)
         mapController.setZoom(DEFAULT_ZOOM_IN_LEVEL)
@@ -118,13 +105,16 @@ class MapActivity : AppCompatActivity() {
         itemsView.layoutManager = LinearLayoutManager(this)
         itemsView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
-            coffeeShopsViewModel.coffeeShops.value
-        ) { position: Int -> focusByModelPosition(position) }
+            coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
+        ) { id: String? -> id?.let { ShopDetailActivity.go(this, it) } }
+
     }
 
-    private fun focusByModelPosition(position: Int) {
-        val coffeeShopPair = coffeeShopsViewModel.coffeeShops.value?.get(position)
-        ShopDetailActivity.go(this, coffeeShopPair!!.first.id)
+    private fun updateCoffeeShop() {
+        val coffeeShopPair = coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
+        itemsView.adapter?.let {
+            (it as CoffeeShopsSimpleListAdapter).updateData(coffeeShopPair)
+        }
     }
 
     private fun initMapTileSource() {
