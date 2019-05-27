@@ -19,10 +19,12 @@ class CoffeeShopsSimpleListAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val TITLE_TYPE = 0
     private val ITEM_TYPE = 1
+    private var referenceRecyclerView: WeakReference<RecyclerView> = WeakReference<RecyclerView>(null)
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        BottomSheetBehavior.from(recyclerView).setBottomSheetCallback(bottomSheetBehaviorCallback)
+        referenceRecyclerView = WeakReference(recyclerView)
+        BottomSheetBehavior.from(referenceRecyclerView.get()).setBottomSheetCallback(bottomSheetBehaviorCallback)
     }
 
     override fun getItemCount(): Int {
@@ -36,16 +38,29 @@ class CoffeeShopsSimpleListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TITLE_TYPE) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_coffee_simple_title, parent, false)
+            view.setOnClickListener { toggleBottomSheetBehaviorState() }
             CoffeeShopTitleViewHolder(view)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_coffee_simple_item, parent, false)
             CoffeeShopViewHolder(view)
         }
+
+    private fun toggleBottomSheetBehaviorState() {
+        referenceRecyclerView.get()?.let {
+            val bottomSheetBehavior = BottomSheetBehavior.from(it)
+            bottomSheetBehavior.state = when (bottomSheetBehavior.state) {
+                BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_COLLAPSED
+                BottomSheetBehavior.STATE_COLLAPSED -> BottomSheetBehavior.STATE_EXPANDED
+                else -> bottomSheetBehavior.state
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = if (position == TITLE_TYPE) {
-        holder as CoffeeShopTitleViewHolder
-        holder.onBind(title)
+        (holder as CoffeeShopTitleViewHolder).onBind(title, when(BottomSheetBehavior.from(referenceRecyclerView.get()).state) {
+            BottomSheetBehavior.STATE_EXPANDED -> R.drawable.down
+            else -> R.drawable.up
+        })
     } else {
         holder as CoffeeShopViewHolder
         holder.itemView.setOnClickListener { onItemClick.invoke(position - 1) }
@@ -85,8 +100,9 @@ class CoffeeShopsSimpleListAdapter(
 
 
     class CoffeeShopTitleViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun onBind(title: String) {
-            itemView.findViewById<TextView>(R.id.title).text = title;
+        fun onBind(title: String, @DrawableRes drawable: Int) {
+            itemView.findViewById<TextView>(R.id.title).text = title
+            itemView.findViewById<ImageView>(R.id.swipe_icon).setImageResource(drawable)
         }
     }
 
