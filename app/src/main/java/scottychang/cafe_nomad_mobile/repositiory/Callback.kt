@@ -1,4 +1,4 @@
-package scottychang.cafe_nomad_mobile
+package scottychang.cafe_nomad_mobile.repositiory
 
 interface MyCallback<T> {
     fun onSuccess(result: T)

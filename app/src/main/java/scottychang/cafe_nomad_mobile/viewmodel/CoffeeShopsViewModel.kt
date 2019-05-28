@@ -5,7 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.location.Location
-import scottychang.cafe_nomad_mobile.MyCallback
+import scottychang.cafe_nomad_mobile.repositiory.MyCallback
 import scottychang.cafe_nomad_mobile.data.CityLatLng
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import scottychang.cafe_nomad_mobile.model.LatLng
@@ -38,7 +38,8 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
 
         loading.postValue(true)
         CoffeeShopRepository.getInstance(getApplication())
-            .loadCoffeeShops(twCity.type, object : MyCallback<List<CoffeeShop>> {
+            .loadCoffeeShops(twCity.type, object :
+                MyCallback<List<CoffeeShop>> {
                 override fun onFailure(exception: Exception) {
                     loading.postValue(false)
                     exceptions.postValue(exception)
