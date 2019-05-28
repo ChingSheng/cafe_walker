@@ -1,7 +1,5 @@
 package scottychang.cafe_nomad_mobile.adapter
 
-import android.content.Context
-import android.support.annotation.DrawableRes
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -9,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import scottychang.cafe_nomad_mobile.R
+import scottychang.cafe_nomad_mobile.adapter.viewholder.CoffeeShopTitleViewHolder
+import scottychang.cafe_nomad_mobile.adapter.viewholder.CoffeeShopViewHolder
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import java.lang.ref.WeakReference
 
@@ -28,6 +27,22 @@ class CoffeeShopsSimpleListAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         referenceRecyclerView = WeakReference(recyclerView)
         BottomSheetBehavior.from(referenceRecyclerView.get()).setBottomSheetCallback(bottomSheetBehaviorCallback)
+    }
+
+    private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            // Do nothing
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            (bottomSheet as RecyclerView).findViewHolderForAdapterPosition(0)?.let {
+                val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.down)
+                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.up)
+                }
+            }
+        }
     }
 
     fun updateData(newData: List<Pair<CoffeeShop, Double>>?) {
@@ -69,94 +84,5 @@ class CoffeeShopsSimpleListAdapter(
     } else {
         holder.itemView.setOnClickListener { onItemClick.invoke(data?.get(position -1)?.first?.id) }
         (holder as CoffeeShopViewHolder).onBind(data?.get(position - 1)!!)
-    }
-
-    class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun onBind(coffeeShop: Pair<CoffeeShop, Double>) {
-            itemView.findViewById<TextView>(R.id.shop_name).text = coffeeShop.first.name
-            itemView.findViewById<TextView>(R.id.distance).text = setDistance(coffeeShop.second)
-            setMetaData(coffeeShop)
-        }
-
-        private fun setMetaData(coffeeShop: Pair<CoffeeShop, Double>) {
-            val metadata = itemView.findViewById<TextView>(R.id.shop_metadata_simple)
-            metadata.text = setMetaString(coffeeShop)
-            metadata.visibility = if (metadata.text.length > 0) View.VISIBLE else View.GONE
-        }
-
-        private fun setMetaString(coffeeShop: Pair<CoffeeShop, Double>): String {
-            val context = itemView.context
-            return setPluginString(context, coffeeShop) +
-                    setWifiString(coffeeShop, context) +
-                    setPriceString(coffeeShop, context)
-        }
-
-        private fun setPriceString(
-            coffeeShop: Pair<CoffeeShop, Double>,
-            context: Context
-        ): String {
-            return (if (coffeeShop.first.cheap!! > 0) (context.getString(
-                R.string.cheap,
-                coffeeShop.first.cheap
-            )) else "")
-        }
-
-        private fun setWifiString(
-            coffeeShop: Pair<CoffeeShop, Double>,
-            context: Context
-        ): String {
-            return (if (coffeeShop.first.wifi!! > 0) (context.getString(
-                R.string.wifi,
-                coffeeShop.first.wifi
-            ) + "\t") else "")
-        }
-
-        private fun setPluginString(
-            context: Context,
-            coffeeShop: Pair<CoffeeShop, Double>
-        ): String? {
-            return (if (getStatusSymbol(context, coffeeShop.first.socket) != null) (context.getString(
-                R.string.socket,
-                getStatusSymbol(context, coffeeShop.first.socket) + "\t"
-            )) else "")
-        }
-
-        private fun getStatusSymbol(context: Context, input: String?): String? =
-            when (input) {
-                "yes" -> context.getString(R.string.yes)
-                "no" -> context.getString(R.string.no)
-                "maybe" -> context.getString(R.string.maybe)
-                else -> null
-            }
-
-        private fun setDistance(second: Double): String =
-            if (second < 1000) {
-                second.toInt().toString() + "m"
-            } else {
-                String.format("%.1f", second / 1000) + "km"
-            }
-    }
-
-    class CoffeeShopTitleViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        fun onBind(title: String, @DrawableRes drawable: Int) {
-            itemView.findViewById<TextView>(R.id.title).text = title
-            itemView.findViewById<ImageView>(R.id.swipe_icon).setImageResource(drawable)
-        }
-    }
-
-    private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            // Do nothing
-        }
-
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            (bottomSheet as RecyclerView).findViewHolderForAdapterPosition(0)?.let {
-                val imageView = it.itemView.findViewById(R.id.swipe_icon) as ImageView
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> imageView.setImageResource(R.drawable.down)
-                    BottomSheetBehavior.STATE_COLLAPSED -> imageView.setImageResource(R.drawable.up)
-                }
-            }
-        }
     }
 }
