@@ -95,7 +95,7 @@ class CoffeeShopsSimpleListAdapter(
             coffeeShop: Pair<CoffeeShop, Double>,
             context: Context
         ): String {
-            return (if (coffeeShop.first.cheap!! > 0) ("\t" + context.getString(
+            return (if (coffeeShop.first.cheap!! > 0) (context.getString(
                 R.string.cheap,
                 coffeeShop.first.cheap
             )) else "")
@@ -105,10 +105,10 @@ class CoffeeShopsSimpleListAdapter(
             coffeeShop: Pair<CoffeeShop, Double>,
             context: Context
         ): String {
-            return (if (coffeeShop.first.wifi!! > 0) ("\t" + context.getString(
+            return (if (coffeeShop.first.wifi!! > 0) (context.getString(
                 R.string.wifi,
                 coffeeShop.first.wifi
-            )) else "")
+            ) + "\t") else "")
         }
 
         private fun setPluginString(
@@ -117,7 +117,7 @@ class CoffeeShopsSimpleListAdapter(
         ): String? {
             return (if (getStatusSymbol(context, coffeeShop.first.socket) != null) (context.getString(
                 R.string.socket,
-                getStatusSymbol(context, coffeeShop.first.socket)
+                getStatusSymbol(context, coffeeShop.first.socket) + "\t"
             )) else "")
         }
 
