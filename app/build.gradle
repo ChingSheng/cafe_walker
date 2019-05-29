@@ -54,4 +54,6 @@ dependencies {
     // 3rd UI: swipe back UI
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
 
+    // Google Map
+    implementation "com.google.android.gms:play-services-maps:16.1.0"
 }
