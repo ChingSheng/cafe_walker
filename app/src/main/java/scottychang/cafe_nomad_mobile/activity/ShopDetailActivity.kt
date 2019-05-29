@@ -11,6 +11,11 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.MarkerOptions
 import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
@@ -23,8 +28,9 @@ import java.net.URLDecoder
 
 
 
-class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
+class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapReadyCallback {
     private val googleMapPackage = "com.google.android.apps.maps"
+    private val DEFAULT_ZOOM_IN_LEVEL = 16.5f
 
     fun <T:View> bindView(@IdRes resId: Int): Lazy<T> = lazy { findViewById<T>(resId) }
 
@@ -44,6 +50,11 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
     private val ratingMusic: TextView by bindView(R.id.music)
     private val openingTime: TextView by bindView(R.id.opening_time)
 
+    private var coffeeShop:CoffeeShop? = null
+
+    lateinit var map: GoogleMap
+    lateinit var mapFragment: MapFragment
+
     private var mHelper: SwipeBackActivityHelper? = null
 
     companion object {
@@ -62,11 +73,33 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
 
         val coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
         initViewDataByIntent(coffeeShopsViewModel)
+
+        mapFragment=fragmentManager.findFragmentById(R.id.map) as MapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun initSwipeBackActivityHelper() {
         mHelper = SwipeBackActivityHelper(this)
         mHelper!!.onActivityCreate()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap?) {
+        map = googleMap!!
+        map.uiSettings.isMyLocationButtonEnabled = false
+        map.uiSettings.isScrollGesturesEnabled = false
+        map.uiSettings.isRotateGesturesEnabled = false
+        map.uiSettings.isZoomGesturesEnabled = false
+        map.uiSettings.isZoomControlsEnabled = false
+        map.uiSettings.isMapToolbarEnabled = false
+
+        coffeeShop?.let {
+            val s: com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(
+                it.latitude?.toDouble() ?: 0.0,
+                it.longitude?.toDouble() ?: 0.0
+            )
+            map.addMarker(MarkerOptions().position(s).title(it.name))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(s, DEFAULT_ZOOM_IN_LEVEL))
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -95,6 +128,7 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase {
     private fun initViewDataByIntent(coffeeShopsViewModel: CoffeeShopsViewModel) {
         intent.getStringExtra(KEY_ID)?.let {
             coffeeShopsViewModel.current.get(it)?.let { coffeeShop: CoffeeShop ->
+                this@ShopDetailActivity.coffeeShop = coffeeShop
                 name.text = coffeeShop.name
                 address.text = coffeeShop.address
                 button.setOnClickListener(buttonClickListener(coffeeShop))
