@@ -18,21 +18,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/items"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-        />
+                app:layout_constraintEnd_toEndOf="parent"/>
     </FrameLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/items"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/recycler_view_height"
-            app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-            app:behavior_peekHeight="@dimen/size_64dp"
-            app:layout_insetEdge="bottom"
-            app:behavior_hideable="false"
-    >
-    </android.support.v7.widget.RecyclerView>
+    <include layout="@layout/layout_bottom_sheet"/>
 
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/floating_button"

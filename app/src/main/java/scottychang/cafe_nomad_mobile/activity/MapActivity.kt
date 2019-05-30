@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
+import android.support.constraint.ConstraintLayout
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -14,9 +16,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.PopupMenu
-import android.widget.Toast
+import android.widget.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -37,7 +37,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val DEFAULT_ZOOM_IN_LEVEL = 16.5f
 
     private val container: FrameLayout by bindView(R.id.container)
-    private val itemsView: RecyclerView by bindView(R.id.items)
+    private val recyclerView: RecyclerView by bindView(R.id.recycler_view)
+    private val bottomSheet: ConstraintLayout by bindView(R.id.items)
+    private val bottomSheetTitleItem: FrameLayout by bindView(R.id.title_item)
+    private val bottomSheetTitle: TextView by bindView(R.id.city)
+    private val bottomSheetIndicator: ImageView by bindView(R.id.indicator)
     private val floatingButton: FloatingActionButton by bindView(R.id.floating_button)
     private val loading: FrameLayout by bindView(R.id.loading)
 
@@ -117,12 +121,42 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupViewData() {
-        itemsView.layoutManager = LinearLayoutManager(this)
-        itemsView.adapter = CoffeeShopsSimpleListAdapter(
+        BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
+        bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
+        bottomSheetTitle.text = getString(CityString.data.get(coffeeShopsViewModel.twCity)!!)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
             coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
         ) { id: String? -> id?.let { ShopDetailActivity.go(this, it) } }
-        (itemsView.adapter as CoffeeShopsSimpleListAdapter).setSlideChangeListener { distance: Float -> translationY(distance) }
+    }
+
+    private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            val distance = slideOffset * bottomSheet.resources.getDimensionPixelSize(R.dimen.item_height)
+            if (distance > 0) {
+                container.translationY = - distance * resources.displayMetrics.density * 0.7f
+            }
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            when (newState) {
+                BottomSheetBehavior.STATE_EXPANDED -> bottomSheetIndicator.setImageResource(R.drawable.down)
+                BottomSheetBehavior.STATE_COLLAPSED -> bottomSheetIndicator.setImageResource(R.drawable.up)
+            }
+        }
+    }
+
+    private fun toggleBottomSheetBehaviorState() {
+        bottomSheet.let {
+            val bottomSheetBehavior = BottomSheetBehavior.from(it)
+            bottomSheetBehavior.state = when (bottomSheetBehavior.state) {
+                BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_COLLAPSED
+                BottomSheetBehavior.STATE_COLLAPSED -> BottomSheetBehavior.STATE_EXPANDED
+                else -> bottomSheetBehavior.state
+            }
+        }
     }
 
     private fun initFloatingButton() {
@@ -135,14 +169,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun updateViewData() {
         val coffeeShopPair = coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
-        itemsView.adapter?.let {
+        recyclerView.adapter?.let {
             (it as CoffeeShopsSimpleListAdapter).updateData(coffeeShopPair)
-        }
-    }
-
-    private fun translationY(distance: Float) {
-        if (distance > 0) {
-            container.translationY = - distance * resources.displayMetrics.density * 0.7f
         }
     }
 

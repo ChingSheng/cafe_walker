@@ -4,12 +4,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent" android:layout_height="match_parent">
 
-
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         <fragment
                 android:name="com.google.android.gms.maps.MapFragment"
                 android:id="@+id/map"
@@ -36,7 +34,6 @@
         </ScrollView>
     </LinearLayout>
 
-
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/location"
             android:layout_width="wrap_content"
@@ -44,7 +41,6 @@
             android:src="@drawable/gmap"
             android:layout_marginEnd="16dp"
             app:layout_anchorGravity="bottom|end"
-
             app:layout_anchor="@+id/map"/>
 
 </android.support.design.widget.CoordinatorLayout>
