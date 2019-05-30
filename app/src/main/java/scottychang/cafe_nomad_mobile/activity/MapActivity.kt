@@ -1,5 +1,6 @@
 package scottychang.cafe_nomad_mobile.activity
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -16,12 +17,11 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import android.widget.Toast
-import org.osmdroid.api.IMapController
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.OnMapReadyCallback
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.XYTileSource
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
-import org.osmdroid.views.MapView
 import scottychang.cafe_nomad_mobile.BuildConfig
 import scottychang.cafe_nomad_mobile.R
 import scottychang.cafe_nomad_mobile.adapter.CoffeeShopsSimpleListAdapter
@@ -31,20 +31,21 @@ import scottychang.cafe_nomad_mobile.model.TwCity
 import scottychang.cafe_nomad_mobile.viewmodel.CoffeeShopsViewModel
 import scottychang.cafe_nomad_mobile.viewmodel.PositioningViewModel
 
-class MapActivity : AppCompatActivity() {
-    private val MAX_ZOOM_IN_LEVEL = 20.0
-    private val MIN_ZOOM_IN_LEVEL = 11.0
-    private val DEFAULT_ZOOM_IN_LEVEL = 16.0
+class MapActivity : AppCompatActivity(), OnMapReadyCallback {
+    private val MAX_ZOOM_IN_LEVEL = 20.0f
+    private val MIN_ZOOM_IN_LEVEL = 11.0f
+    private val DEFAULT_ZOOM_IN_LEVEL = 16.5f
 
-    private val mapView: MapView by bindView(R.id.map)
-    private val mapController: IMapController by lazy { mapView.controller }
+    private val container: FrameLayout by bindView(R.id.container)
     private val itemsView: RecyclerView by bindView(R.id.items)
-
     private val floatingButton: FloatingActionButton by bindView(R.id.floating_button)
     private val loading: FrameLayout by bindView(R.id.loading)
 
+    private lateinit var mapFragment: MapFragment
     private lateinit var coffeeShopsViewModel: CoffeeShopsViewModel
     private lateinit var positioningViewModel: PositioningViewModel
+
+    private lateinit var map:GoogleMap
 
     companion object {
         private val SHOW_INTRODUCTION_DIALOG = "show_dialog"
@@ -65,22 +66,9 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
         showIntroductionDialogIfNeeded()
-        initMapZoomInSpec()
-        initMapTileSource()
 
-        positioningViewModel = ViewModelProviders.of(this).get(PositioningViewModel::class.java)
-        positioningViewModel.latLng.observe(this, Observer<LatLng> { latLng -> setCenter(latLng) })
-
-        coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
-        coffeeShopsViewModel.coffeeShops.observe(this, Observer { initRecyclerView() })
-        coffeeShopsViewModel.exceptions.observe(this, Observer { Toast.makeText(this, it?.message ?: "UnknownError", Toast.LENGTH_LONG).show() })
-        coffeeShopsViewModel.loading.observe(this, Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
-
-        floatingButton.setOnClickListener {
-            positioningViewModel.reloadFromGps()
-            updateCoffeeShop()
-        }
-        floatingButton.setOnLongClickListener { createPopupMenu(it) }
+        mapFragment = fragmentManager.findFragmentById(R.id.map) as MapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun showIntroductionDialogIfNeeded() {
@@ -95,55 +83,67 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun setCenter(t: LatLng?) {
-        val startPoint = GeoPoint(t?.latitude ?: .0, t?.longitude ?: .0)
-        mapController.setZoom(DEFAULT_ZOOM_IN_LEVEL)
-        mapController.setCenter(startPoint)
+    @SuppressLint("MissingPermission")
+    override fun onMapReady(googleMap: GoogleMap?) {
+        map = googleMap!!
+        map.isMyLocationEnabled = true
+        map.setMaxZoomPreference(MAX_ZOOM_IN_LEVEL)
+        map.setMinZoomPreference(MIN_ZOOM_IN_LEVEL)
+
+        initPositioning()
+        initCoffeeShops()
+        initFloatingButton()
     }
 
-    private fun initRecyclerView() {
+    private fun initPositioning() {
+        positioningViewModel = ViewModelProviders.of(this).get(PositioningViewModel::class.java)
+        positioningViewModel.latLng.observe(this, Observer<LatLng> { latLng -> setCenter(latLng) })
+    }
+
+    private fun setCenter(t: LatLng?) {
+        val s : com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(t!!.latitude, t!!.longitude)
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(s, DEFAULT_ZOOM_IN_LEVEL));
+    }
+
+    private fun initCoffeeShops() {
+        coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
+        coffeeShopsViewModel.coffeeShops.observe(this, Observer { setupViewData() })
+        coffeeShopsViewModel.exceptions.observe(
+            this,
+            Observer { Toast.makeText(this, it?.message ?: "UnknownError", Toast.LENGTH_LONG).show() })
+        coffeeShopsViewModel.loading.observe(
+            this,
+            Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
+    }
+
+    private fun setupViewData() {
         itemsView.layoutManager = LinearLayoutManager(this)
         itemsView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
             coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
         ) { id: String? -> id?.let { ShopDetailActivity.go(this, it) } }
-
+        (itemsView.adapter as CoffeeShopsSimpleListAdapter).setSlideChangeListener { distance: Float -> translationY(distance) }
     }
 
-    private fun updateCoffeeShop() {
+    private fun initFloatingButton() {
+        floatingButton.setOnClickListener {
+            positioningViewModel.reloadFromGps()
+            updateViewData()
+        }
+        floatingButton.setOnLongClickListener { createPopupMenu(it) }
+    }
+
+    private fun updateViewData() {
         val coffeeShopPair = coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
         itemsView.adapter?.let {
             (it as CoffeeShopsSimpleListAdapter).updateData(coffeeShopPair)
         }
     }
 
-    private fun initMapTileSource() {
-        val scale = baseContext.resources.displayMetrics.density
-        val newScale = (128 * scale).toInt()
-        val OSMSource = arrayOfNulls<String>(2)
-        OSMSource[0] = "http://a.tile.openstreetmap.org/"
-        OSMSource[1] = "http://b.tile.openstreetmap.org/"
-        val MapSource =
-            XYTileSource("OSM", MIN_ZOOM_IN_LEVEL.toInt(), MAX_ZOOM_IN_LEVEL.toInt(), newScale, ".png", OSMSource)
-        mapView.setTileSource(MapSource)
-    }
-
-    private fun initMapZoomInSpec() {
-        mapView.setMultiTouchControls(true)
-        mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        mapView.maxZoomLevel = MAX_ZOOM_IN_LEVEL
-        mapView.minZoomLevel = MIN_ZOOM_IN_LEVEL
-        mapController.setZoom(DEFAULT_ZOOM_IN_LEVEL)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
+    private fun translationY(distance: Float) {
+        if (distance > 0) {
+            container.translationY = - distance * resources.displayMetrics.density * 0.7f
+        }
     }
 
     //================================================================================

@@ -31,7 +31,8 @@ class CoffeeShopsSimpleListAdapter(
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            // Do nothing
+            val bottomSheetHeight = bottomSheet.resources.getDimensionPixelSize(R.dimen.item_height)
+            slideChangeListener.invoke(slideOffset * bottomSheetHeight)
         }
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -43,6 +44,12 @@ class CoffeeShopsSimpleListAdapter(
                 }
             }
         }
+    }
+
+    private var slideChangeListener: (distance: Float) -> Unit = {}
+
+    fun setSlideChangeListener(callback: (distance: Float) -> Unit) {
+        slideChangeListener = callback
     }
 
     fun updateData(newData: List<Pair<CoffeeShop, Double>>?) {
