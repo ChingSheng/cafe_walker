@@ -27,7 +27,7 @@ class PermissionCheckActivity : AppCompatActivity() {
     private fun hasPermissions(): Boolean {
         for (permission in PERMISSIONS) {
             if(ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
+                return false
             }
         }
         return true
@@ -36,7 +36,7 @@ class PermissionCheckActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         for (grantResult:Int in grantResults) {
             if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG).show()
                 Handler().postDelayed({finish()}, 3000)
                 return
             }
