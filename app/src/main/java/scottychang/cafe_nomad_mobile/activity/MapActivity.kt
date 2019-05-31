@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.CameraPosition
 import org.osmdroid.config.Configuration
 import scottychang.cafe_nomad_mobile.BuildConfig
 import scottychang.cafe_nomad_mobile.R
@@ -52,7 +53,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map:GoogleMap
 
     companion object {
-        private val SHOW_INTRODUCTION_DIALOG = "show_dialog"
+        private const val SHOW_INTRODUCTION_DIALOG = "show_dialog"
         fun go(context: Context, showIntroductionDialog: Boolean) {
             val intent = Intent(context, MapActivity::class.java)
             intent.putExtra(SHOW_INTRODUCTION_DIALOG, showIntroductionDialog)
@@ -91,6 +92,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap!!
         map.isMyLocationEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
         map.setMaxZoomPreference(MAX_ZOOM_IN_LEVEL)
         map.setMinZoomPreference(MIN_ZOOM_IN_LEVEL)
 
@@ -104,9 +106,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         positioningViewModel.latLng.observe(this, Observer<LatLng> { latLng -> setCenter(latLng) })
     }
 
-    private fun setCenter(t: LatLng?) {
-        val s : com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(t!!.latitude, t!!.longitude)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(s, DEFAULT_ZOOM_IN_LEVEL));
+    private fun setCenter(position: LatLng?) {
+        val s : com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(position!!.latitude, position!!.longitude)
+        val cameraPosition = CameraPosition.builder().target(s).zoom(DEFAULT_ZOOM_IN_LEVEL).build()
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
     private fun initCoffeeShops() {
@@ -123,7 +126,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setupViewData() {
         BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
         bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
-        bottomSheetTitle.text = getString(CityString.data.get(coffeeShopsViewModel.twCity)!!)
+        bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = CoffeeShopsSimpleListAdapter(
@@ -186,7 +189,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         popupMenu.menu.findItem(R.id.location_south).subMenu.clearHeader()
         popupMenu.menu.findItem(R.id.location_east).subMenu.clearHeader()
         popupMenu.menu.findItem(R.id.location_isolated).subMenu.clearHeader()
-        popupMenu.setOnMenuItemClickListener { view -> this.onMenuItemSelected(view!!) }
+        popupMenu.setOnMenuItemClickListener { item -> this.onMenuItemSelected(item!!) }
         popupMenu.show()
         return true
     }
