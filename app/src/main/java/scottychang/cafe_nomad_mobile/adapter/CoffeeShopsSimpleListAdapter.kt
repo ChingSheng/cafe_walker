@@ -12,7 +12,8 @@ import java.lang.ref.WeakReference
 class CoffeeShopsSimpleListAdapter(
     private val title: String,
     private var data: List<Pair<CoffeeShop, Double>>?,
-    private val onItemClick: (id: String?) -> Unit = {}
+    private val onItemClick: (id: String?) -> Unit = {},
+    private val onItemLongClick: (id: String?) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var referenceRecyclerView: WeakReference<RecyclerView> = WeakReference<RecyclerView>(null)
 
@@ -36,6 +37,8 @@ class CoffeeShopsSimpleListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder.itemView.setOnClickListener { onItemClick.invoke(data?.get(position)?.first?.id) }
+        holder.itemView.setOnLongClickListener {onItemLongClick.invoke(data?.get(position)?.first?.id)
+            true}
         (holder as CoffeeShopViewHolder).onBind(data?.get(position)!!)
     }
 }

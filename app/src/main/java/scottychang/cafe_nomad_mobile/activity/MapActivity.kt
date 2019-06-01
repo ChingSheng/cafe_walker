@@ -131,8 +131,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
-            coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!)
-        ) { id: String? -> id?.let { ShopDetailActivity.go(this, it) } }
+            coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!),
+            { id: String? -> id?.let { ShopDetailActivity.go(this, it) } },
+            { id: String? -> id?.let {
+                val coffeeShop = coffeeShopsViewModel.current[it]!!
+                setCenter(LatLng(coffeeShop.latitude?.toDouble()?: .0, coffeeShop.longitude?.toDouble()?:.0)) } }
+        )
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
