@@ -93,12 +93,12 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
         map.uiSettings.isMapToolbarEnabled = false
 
         coffeeShop?.let {
-            val s: com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(
+            val latLng: com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(
                 it.latitude?.toDouble() ?: 0.0,
                 it.longitude?.toDouble() ?: 0.0
             )
-            map.addMarker(MarkerOptions().position(s).title(it.name))
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(s, DEFAULT_ZOOM_IN_LEVEL))
+            map.addMarker(MarkerOptions().position(latLng).title(it.name))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_IN_LEVEL))
         }
     }
 
@@ -192,7 +192,7 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
     }
 
     private fun validState(data: String): Boolean {
-        return data.equals("yes") || data.equals("no") || data.equals("maybe")
+        return data == "yes" || data == "no" || data == "maybe"
     }
 
     private fun initMRT(data: String?) {
