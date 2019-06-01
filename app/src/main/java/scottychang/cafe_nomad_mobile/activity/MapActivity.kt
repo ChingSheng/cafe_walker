@@ -22,11 +22,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
-import org.osmdroid.config.Configuration
-import scottychang.cafe_nomad_mobile.BuildConfig
+import com.google.maps.android.clustering.Cluster
+import com.google.maps.android.clustering.ClusterManager
 import scottychang.cafe_nomad_mobile.R
 import scottychang.cafe_nomad_mobile.adapter.CoffeeShopsSimpleListAdapter
 import scottychang.cafe_nomad_mobile.data.CityString
+import scottychang.cafe_nomad_mobile.model.CoffeeShopClusterItem
 import scottychang.cafe_nomad_mobile.model.LatLng
 import scottychang.cafe_nomad_mobile.model.TwCity
 import scottychang.cafe_nomad_mobile.viewmodel.CoffeeShopsViewModel
@@ -51,6 +52,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var positioningViewModel: PositioningViewModel
 
     private lateinit var map:GoogleMap
+    private lateinit var clusterManager: ClusterManager<CoffeeShopClusterItem>
 
     companion object {
         private const val SHOW_INTRODUCTION_DIALOG = "show_dialog"
@@ -62,10 +64,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun <T : View> bindView(@IdRes resId: Int): Lazy<T> = lazy { findViewById<T>(resId) }
-
-    init {
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,9 +94,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         map.setMaxZoomPreference(MAX_ZOOM_IN_LEVEL)
         map.setMinZoomPreference(MIN_ZOOM_IN_LEVEL)
 
+        clusterManager = ClusterManager(this, map)
+        clusterManager.setOnClusterClickListener { zoomInFromCluster(it) }
+        clusterManager.setOnClusterItemInfoWindowClickListener{ ShopDetailActivity.go(this, it!!.getId())}
+        map.setOnCameraIdleListener (clusterManager)
+        map.setOnMarkerClickListener(clusterManager)
+        map.setOnInfoWindowClickListener(clusterManager)
+
         initPositioning()
         initCoffeeShops()
         initFloatingButton()
+    }
+
+    private fun zoomInFromCluster(it: Cluster<CoffeeShopClusterItem>): Boolean {
+        val cameraPosition = CameraPosition.builder().target(it.position).zoom(map.cameraPosition.zoom + 1).build()
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        return true
     }
 
     private fun initPositioning() {
@@ -128,6 +139,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
         bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
 
+        map.clear()
+        clusterManager.clearItems()
+        clusterManager.addItems(coffeeShopsViewModel.coffeeShops.value!!.map { CoffeeShopClusterItem(it) })
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = CoffeeShopsSimpleListAdapter(
             getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
@@ -141,9 +156,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            val upShiftRatio = 0.7f // BottomSheet shift 1 unit, map shift 0.7 unit
             val distance = slideOffset * bottomSheet.resources.getDimensionPixelSize(R.dimen.item_height)
             if (distance > 0) {
-                container.translationY = - distance * resources.displayMetrics.density * 0.7f
+                container.translationY = - distance * resources.displayMetrics.density * upShiftRatio
             }
         }
 

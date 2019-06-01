@@ -8,7 +8,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "scottychang.coffee_nomad_mobile"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -56,4 +56,6 @@ dependencies {
 
     // Google Map
     implementation "com.google.android.gms:play-services-maps:16.1.0"
+    implementation 'com.google.android.gms:play-services-places:16.1.0'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
 }
