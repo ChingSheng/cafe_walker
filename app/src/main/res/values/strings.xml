@@ -51,4 +51,5 @@
     <string name="rating_cheap">價格平實： %1$.1f\u2605</string>
     <string name="rating_quiet">安靜程度： %1$.1f\u2605</string>
     <string name="rating_music">裝潢音樂： %1$.1f\u2605</string>
+    <string name="permission_not_grant">要取得裝置位置權限後才能使用呦～</string>
 </resources>
