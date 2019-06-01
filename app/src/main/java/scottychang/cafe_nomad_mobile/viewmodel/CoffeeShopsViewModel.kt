@@ -5,18 +5,20 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.location.Location
-import scottychang.cafe_nomad_mobile.repositiory.MyCallback
 import scottychang.cafe_nomad_mobile.data.CityLatLng
 import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import scottychang.cafe_nomad_mobile.model.LatLng
 import scottychang.cafe_nomad_mobile.model.TwCity
 import scottychang.cafe_nomad_mobile.repositiory.CoffeeShopRepository
+import scottychang.cafe_nomad_mobile.repositiory.MyCallback
 import scottychang.cafe_nomad_mobile.repositiory.PositioningRepository
 import scottychang.cafe_nomad_mobile.repositiory.SharePrefRepository
 import java.util.*
 import kotlin.collections.HashMap
 
 class CoffeeShopsViewModel(application: Application) : AndroidViewModel(application) {
+    private val MAX_SHOPS_IN_BOTTOM_SHEET = 50
+
     var coffeeShops = MutableLiveData<List<CoffeeShop>>()
     var exceptions = MutableLiveData<Exception>()
     var loading = MutableLiveData<Boolean>()
@@ -63,7 +65,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         }
         val result = coffeeDistancePair.toList().sortedBy { (_, distance) -> distance }.subList(
             0,
-            Math.min(50, coffeeDistancePair.size)
+            Math.min(MAX_SHOPS_IN_BOTTOM_SHEET, coffeeDistancePair.size)
         )
         return result
     }
