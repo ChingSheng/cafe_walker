@@ -142,6 +142,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         map.clear()
         clusterManager.clearItems()
         clusterManager.addItems(coffeeShopsViewModel.coffeeShops.value!!.map { CoffeeShopClusterItem(it) })
+        clusterManager.cluster()
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = CoffeeShopsSimpleListAdapter(
