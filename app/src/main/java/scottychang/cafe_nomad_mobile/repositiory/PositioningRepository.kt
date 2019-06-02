@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import scottychang.cafe_nomad_mobile.model.LatLng
 
 class PositioningRepository() {
@@ -23,8 +24,10 @@ class PositioningRepository() {
 
             if(!hasRegister) {
                 val bestProvider= findBestProvider(context)
-                lm.requestLocationUpdates(bestProvider, 0, .5f, locationListener)
-                bestLocation = lm.getLastKnownLocation(bestProvider)
+                if (!bestProvider.isEmpty()) {
+                    lm.requestLocationUpdates(bestProvider, 0, .5f, locationListener)
+                    bestLocation = lm.getLastKnownLocation(bestProvider)
+                }
                 hasRegister = true
             }
             return LatLng(bestLocation?.latitude ?: defaultLat, bestLocation?.longitude ?: defaultLng)
@@ -37,11 +40,14 @@ class PositioningRepository() {
             var result:String = ""
             for (provider in lm.allProviders) {
                 val location = lm.getLastKnownLocation(provider) ?: continue
+                Log.d("DADA2", location.provider +  " " + location.latitude + " " + location.longitude +  " " + location.accuracy )
                 if (location.accuracy < accuracy) {
                     accuracy = location.accuracy
                     result = provider
                 }
+
             }
+            Log.d("DADA", "bestprovider:" + result)
             return result
         }
         
