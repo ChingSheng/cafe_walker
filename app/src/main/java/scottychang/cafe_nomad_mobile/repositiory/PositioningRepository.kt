@@ -2,21 +2,24 @@ package scottychang.cafe_nomad_mobile.repositiory
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import scottychang.cafe_nomad_mobile.model.LatLng
 
 class PositioningRepository() {
     companion object {
-        // Taipei
-        var defaultLat = 25.09108
-        var defaultLng = 121.5598
+        private val MIN_UPDATE_TIME_MS = 3000L
+        private val MIN_DISTANCE_METER = 3f
 
+        // Taipei
+        private val defaultLat = 25.09108
+        private val defaultLng = 121.5598
+
+        private var hasRegister = false
         var bestLocation: android.location.Location? = null
-        var hasRegister = false
 
         @SuppressLint("MissingPermission")
         fun loadLatLng(context: Context): LatLng {
@@ -25,7 +28,7 @@ class PositioningRepository() {
             if(!hasRegister) {
                 val bestProvider= findBestProvider(context)
                 if (!bestProvider.isEmpty()) {
-                    lm.requestLocationUpdates(bestProvider, 0, .5f, locationListener)
+                    lm.requestLocationUpdates(bestProvider, MIN_UPDATE_TIME_MS, MIN_DISTANCE_METER, locationListener)
                     bestLocation = lm.getLastKnownLocation(bestProvider)
                 }
                 hasRegister = true
@@ -36,19 +39,13 @@ class PositioningRepository() {
         @SuppressLint("MissingPermission")
         private fun findBestProvider(context:Context): String {
             val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            var accuracy = Float.MAX_VALUE
-            var result:String = ""
-            for (provider in lm.allProviders) {
-                val location = lm.getLastKnownLocation(provider) ?: continue
-                Log.d("DADA2", location.provider +  " " + location.latitude + " " + location.longitude +  " " + location.accuracy )
-                if (location.accuracy < accuracy) {
-                    accuracy = location.accuracy
-                    result = provider
-                }
-
-            }
-            Log.d("DADA", "bestprovider:" + result)
-            return result
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_COARSE;
+            criteria.isAltitudeRequired = false;
+            criteria.isBearingRequired = false;
+            criteria.isCostAllowed = true;
+            criteria.powerRequirement = Criteria.POWER_LOW;
+            return lm.getBestProvider(criteria, true)
         }
         
         private val locationListener = object :LocationListener {
