@@ -126,7 +126,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initCoffeeShops() {
         coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
-        coffeeShopsViewModel.coffeeShops.observe(this, Observer { setupViewData() })
+        coffeeShopsViewModel.coffeeShops.observe(this, Observer { setupViewAndData() })
         coffeeShopsViewModel.exceptions.observe(
             this,
             Observer { Toast.makeText(this, it?.message ?: "UnknownError", Toast.LENGTH_LONG).show() })
@@ -135,25 +135,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             Observer { isLoading -> loading.visibility = if (isLoading!!) View.VISIBLE else View.GONE })
     }
 
-    private fun setupViewData() {
-        BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
-        bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
-        bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
+    private fun setupViewAndData() {
+        setupMapViewCluster()
+        setupBottomSheetTitle()
+        setupBottomSheetData()
+    }
 
+    private fun setupMapViewCluster() {
         map.clear()
         clusterManager.clearItems()
         clusterManager.addItems(coffeeShopsViewModel.coffeeShops.value!!.map { CoffeeShopClusterItem(it) })
         clusterManager.cluster()
+    }
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = CoffeeShopsSimpleListAdapter(
-            getString(CityString.data.get(coffeeShopsViewModel.twCity) ?: R.string.unknown_location),
-            coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!),
-            { id: String? -> id?.let { ShopDetailActivity.go(this, it) } },
-            { id: String? -> id?.let {
-                val coffeeShop = coffeeShopsViewModel.current[it]!!
-                setCenter(LatLng(coffeeShop.latitude?.toDouble()?: .0, coffeeShop.longitude?.toDouble()?:.0)) } }
-        )
+    private fun setupBottomSheetTitle() {
+        BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
+        bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
+        bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -182,6 +180,20 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 else -> bottomSheetBehavior.state
             }
         }
+    }
+
+    private fun setupBottomSheetData() {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = CoffeeShopsSimpleListAdapter(
+            coffeeShopsViewModel.getDistancePairFromPosition(positioningViewModel.latLng.value!!),
+            { id: String? -> id?.let { ShopDetailActivity.go(this, it) } },
+            { id: String? ->
+                id?.let {
+                    val coffeeShop = coffeeShopsViewModel.current[it]!!
+                    setCenter(LatLng(coffeeShop.latitude?.toDouble() ?: .0, coffeeShop.longitude?.toDouble() ?: .0))
+                }
+            }
+        )
     }
 
     private fun initFloatingButton() {

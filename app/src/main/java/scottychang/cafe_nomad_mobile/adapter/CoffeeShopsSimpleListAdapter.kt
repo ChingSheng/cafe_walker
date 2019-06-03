@@ -10,7 +10,6 @@ import scottychang.cafe_nomad_mobile.model.CoffeeShop
 import java.lang.ref.WeakReference
 
 class CoffeeShopsSimpleListAdapter(
-    private val title: String,
     private var data: List<Pair<CoffeeShop, Double>>?,
     private val onItemClick: (id: String?) -> Unit = {},
     private val onItemLongClick: (id: String?) -> Unit = {}
