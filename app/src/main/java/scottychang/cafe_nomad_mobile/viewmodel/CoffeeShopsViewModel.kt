@@ -70,7 +70,6 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         return result
     }
 
-
     private fun getNearestCity(context: Context): TwCity {
         val current = PositioningRepository.loadLatLng(context)
         var bestDistance = -.1
