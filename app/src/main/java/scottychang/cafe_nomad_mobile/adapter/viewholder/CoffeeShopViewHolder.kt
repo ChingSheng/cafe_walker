@@ -27,13 +27,13 @@ class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) 
                 setPriceString(coffeeShop, context)
     }
 
-    private fun setPriceString(
-        coffeeShop: Pair<CoffeeShop, Double>,
-        context: Context
-    ): String {
-        return (if (coffeeShop.first.cheap!! > 0) (context.getString(
-            R.string.cheap,
-            coffeeShop.first.cheap
+    private fun setPluginString(
+        context: Context,
+        coffeeShop: Pair<CoffeeShop, Double>
+    ): String? {
+        return (if (getStatusSymbol(context, coffeeShop.first.socket) != null) (context.getString(
+            R.string.socket,
+            getStatusSymbol(context, coffeeShop.first.socket) + "\t"
         )) else "")
     }
 
@@ -47,13 +47,13 @@ class CoffeeShopViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) 
         ) + "\t") else "")
     }
 
-    private fun setPluginString(
-        context: Context,
-        coffeeShop: Pair<CoffeeShop, Double>
-    ): String? {
-        return (if (getStatusSymbol(context, coffeeShop.first.socket) != null) (context.getString(
-            R.string.socket,
-            getStatusSymbol(context, coffeeShop.first.socket) + "\t"
+    private fun setPriceString(
+        coffeeShop: Pair<CoffeeShop, Double>,
+        context: Context
+    ): String {
+        return (if (coffeeShop.first.cheap!! > 0) (context.getString(
+            R.string.cheap,
+            coffeeShop.first.cheap
         )) else "")
     }
 
