@@ -186,7 +186,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initFloatingButton() {
         floatingButton.setOnClickListener {
-            positioningViewModel.reloadFromGps()
+            positioningViewModel.reloadPosition()
             updateViewData()
         }
         floatingButton.setOnLongClickListener { createPopupMenu(it) }
