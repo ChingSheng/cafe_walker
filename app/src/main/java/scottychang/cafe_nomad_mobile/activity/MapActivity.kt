@@ -91,6 +91,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap!!
         map.isMyLocationEnabled = true
         map.uiSettings.isMyLocationButtonEnabled = false
+        map.uiSettings.isMapToolbarEnabled = false
         map.setMaxZoomPreference(MAX_ZOOM_IN_LEVEL)
         map.setMinZoomPreference(MIN_ZOOM_IN_LEVEL)
 
@@ -107,7 +108,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun zoomInFromCluster(it: Cluster<CoffeeShopClusterItem>): Boolean {
-        val cameraPosition = CameraPosition.builder().target(it.position).zoom(map.cameraPosition.zoom + 1).build()
+        val cameraPosition = CameraPosition.builder().target(it.position).zoom(map.cameraPosition.zoom + 2).build()
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         return true
     }
