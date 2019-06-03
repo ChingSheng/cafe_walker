@@ -11,10 +11,12 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
@@ -74,32 +76,13 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
         val coffeeShopsViewModel = ViewModelProviders.of(this).get(CoffeeShopsViewModel::class.java)
         initViewDataByIntent(coffeeShopsViewModel)
 
-        mapFragment=fragmentManager.findFragmentById(R.id.map) as MapFragment
+        mapFragment = fragmentManager.findFragmentById(R.id.map) as MapFragment
         mapFragment.getMapAsync(this)
     }
 
     private fun initSwipeBackActivityHelper() {
         mHelper = SwipeBackActivityHelper(this)
         mHelper!!.onActivityCreate()
-    }
-
-    override fun onMapReady(googleMap: GoogleMap?) {
-        map = googleMap!!
-        map.uiSettings.isMyLocationButtonEnabled = false
-        map.uiSettings.isScrollGesturesEnabled = false
-        map.uiSettings.isRotateGesturesEnabled = false
-        map.uiSettings.isZoomGesturesEnabled = false
-        map.uiSettings.isZoomControlsEnabled = false
-        map.uiSettings.isMapToolbarEnabled = false
-
-        coffeeShop?.let {
-            val latLng: com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(
-                it.latitude?.toDouble() ?: 0.0,
-                it.longitude?.toDouble() ?: 0.0
-            )
-            map.addMarker(MarkerOptions().position(latLng).title(it.name))
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_IN_LEVEL))
-        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -125,6 +108,32 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
         swipeBackLayout.scrollToFinishActivity()
     }
 
+    override fun onMapReady(googleMap: GoogleMap?) {
+        map = googleMap!!
+        initMapUiSetting()
+        initShopMarker()
+    }
+
+    private fun initMapUiSetting() {
+        map.uiSettings.isMyLocationButtonEnabled = false
+        map.uiSettings.isScrollGesturesEnabled = false
+        map.uiSettings.isRotateGesturesEnabled = false
+        map.uiSettings.isZoomGesturesEnabled = false
+        map.uiSettings.isZoomControlsEnabled = false
+        map.uiSettings.isMapToolbarEnabled = false
+    }
+
+    private fun initShopMarker() {
+        coffeeShop?.let {
+            val latLng: LatLng = LatLng(
+                it.latitude?.toDouble() ?: 0.0,
+                it.longitude?.toDouble() ?: 0.0
+            )
+            map.addMarker(MarkerOptions().position(latLng).title(it.name))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_IN_LEVEL))
+        }
+    }
+
     private fun initViewDataByIntent(coffeeShopsViewModel: CoffeeShopsViewModel) {
         intent.getStringExtra(KEY_ID)?.let {
             coffeeShopsViewModel.current.get(it)?.let { coffeeShop: CoffeeShop ->
@@ -140,10 +149,10 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
                 initRating(coffeeShop)
                 initOpeningTime(coffeeShop.open_time)
             } ?: run {
-                // Show something wrong
+                showErrorToastAndFinish()
             }
         } ?: run {
-            // Show something wrong
+            showErrorToastAndFinish()
         }
     }
 
@@ -233,4 +242,9 @@ class ShopDetailActivity : AppCompatActivity(), SwipeBackActivityBase, OnMapRead
     }
 
     private fun valid(input: String?): Boolean = input != null && input.isNotEmpty()
+
+    private fun showErrorToastAndFinish() {
+        Toast.makeText(this, R.string.shop_detail_invalid_id_msg, Toast.LENGTH_LONG).show()
+        finish()
+    }
 }
