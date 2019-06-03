@@ -38,7 +38,7 @@
     <string name="maybe">\u25b3</string>
     <string name="no">\u2573</string>
     <string name="network_error">網路異常，請檢查你的網路連線狀態</string>
-    <string name="first_launch_msg">第一次啟動的朋友你好，長按定位鈕可以更改城市</string>
+    <string name="first_launch_msg">第一次啟動的朋友你好\n以下是使用小技巧：\n1. 下方橫欄點開可顯示周遭咖啡廳\n2. 長按定位鈕可以更改城市\n3. 長按咖啡廳可在地圖抵達該地點</string>
     <string name="title_rating">綜合評比</string>
     <string name="title_opening">營業時間</string>
     <string name="first_launch_button_text">我知道了</string>
