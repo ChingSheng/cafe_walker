@@ -70,6 +70,10 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         return result
     }
 
+    fun getLatLng(coffeeShop: CoffeeShop): LatLng {
+        return LatLng(coffeeShop.latitude?.toDouble() ?: .0, coffeeShop.longitude?.toDouble() ?: .0)
+    }
+
     private fun getNearestCity(context: Context): TwCity {
         val current = PositioningRepository.loadLatLng(context)
         var bestDistance = -.1
@@ -88,9 +92,5 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         val result = FloatArray(1)
         Location.distanceBetween(point1.latitude, point1.longitude, point2.latitude, point2.longitude, result)
         return result.get(0).toDouble()
-    }
-
-    fun getLatLng(coffeeShop: CoffeeShop): LatLng {
-        return LatLng(coffeeShop.latitude?.toDouble() ?: .0, coffeeShop.longitude?.toDouble() ?: .0)
     }
 }
