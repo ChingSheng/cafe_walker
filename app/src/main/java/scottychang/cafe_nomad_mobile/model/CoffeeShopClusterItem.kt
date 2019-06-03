@@ -4,7 +4,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
 class CoffeeShopClusterItem(private val coffeeShop: CoffeeShop): ClusterItem {
-
     override fun getSnippet(): String {
         return coffeeShop.address?: ""
     }
@@ -20,5 +19,4 @@ class CoffeeShopClusterItem(private val coffeeShop: CoffeeShop): ClusterItem {
     fun getId(): String {
         return coffeeShop.id
     }
-
 }
