@@ -1,6 +1,6 @@
 <resources>
     <!-- Locations -->
-    <string name="app_name">CafeNomad:Mobile</string>
+    <string name="app_name">Cafe Walker</string>
     <string name="location_north">北部</string>
     <string name="location_middle">中部</string>
     <string name="location_south">南部</string>
