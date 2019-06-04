@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="scottychang.cafe_nomad_mobile">
+          package="scottychang.cafe_walker">
     <uses-permission  android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -18,9 +18,9 @@
                 android:name="com.google.android.geo.API_KEY"
                 android:value="YOUR_API_KEY"/>
 
-        <activity android:name="scottychang.cafe_nomad_mobile.activity.MapActivity"/>
-        <activity android:name="scottychang.cafe_nomad_mobile.activity.ShopDetailActivity"/>
-        <activity android:name="scottychang.cafe_nomad_mobile.activity.PermissionCheckActivity">
+        <activity android:name="scottychang.cafe_walker.activity.MapActivity"/>
+        <activity android:name="scottychang.cafe_walker.activity.ShopDetailActivity"/>
+        <activity android:name="scottychang.cafe_walker.activity.PermissionCheckActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

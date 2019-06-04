@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "scottychang.coffee_nomad_mobile"
+        applicationId "scottychang.cafe_walker"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
