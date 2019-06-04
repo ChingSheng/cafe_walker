@@ -40,10 +40,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.github.MKergall:osmbonuspack:6.6.0'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
-
+    // Retrofit2 & Okhttp
     implementation 'com.squareup.retrofit2:adapter-java8:2.4.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.2'
@@ -51,7 +49,7 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:3.11.0'
     api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 
-    // 3rd UI: swipe back UI
+    // Swipe back UI
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
 
     // Google Map
