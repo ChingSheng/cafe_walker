@@ -8,6 +8,6 @@ import scottychang.cafe_walker.model.CoffeeShop;
 import java.util.List;
 
 public interface CafeNomadApi {
-    @GET("{city}")
+    @GET("cafes/{city}")
     Call<List<CoffeeShop>> getCoffeeShops(@Path("city") String city);
 }
