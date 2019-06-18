@@ -17,6 +17,7 @@
             android:layout_height="@dimen/size_64dp"
             android:orientation="horizontal"
             android:background="@color/colorPrimary"
+            android:foreground="?android:attr/selectableItemBackground"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -27,6 +28,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
             android:gravity="center_vertical"
+            android:drawableRight="@drawable/sort_up"
+            android:drawablePadding="@dimen/size_8dp"
+            android:background="@drawable/location_menu"
+            android:foreground="?android:attr/selectableItemBackground"
             android:textSize="@dimen/text_size_20sp"
             android:textColor="@color/colorPrimaryText"
             app:layout_constraintTop_toTopOf="@+id/title_item"
