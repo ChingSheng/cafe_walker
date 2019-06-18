@@ -51,7 +51,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var coffeeShopsViewModel: CoffeeShopsViewModel
     private lateinit var positioningViewModel: PositioningViewModel
 
-    private lateinit var map:GoogleMap
+    private lateinit var map: GoogleMap
     private lateinit var clusterManager: ClusterManager<CoffeeShopClusterItem>
 
     companion object {
@@ -97,8 +97,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         clusterManager = ClusterManager(this, map)
         clusterManager.setOnClusterClickListener { zoomInFromCluster(it) }
-        clusterManager.setOnClusterItemInfoWindowClickListener{ ShopDetailActivity.go(this, it!!.getId())}
-        map.setOnCameraIdleListener (clusterManager)
+        clusterManager.setOnClusterItemInfoWindowClickListener { ShopDetailActivity.go(this, it!!.getId()) }
+        map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
         map.setOnInfoWindowClickListener(clusterManager)
 
@@ -119,7 +119,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setCenter(position: LatLng?) {
-        val s : com.google.android.gms.maps.model.LatLng = com.google.android.gms.maps.model.LatLng(position!!.latitude, position!!.longitude)
+        val s: com.google.android.gms.maps.model.LatLng =
+            com.google.android.gms.maps.model.LatLng(position!!.latitude, position!!.longitude)
         val cameraPosition = CameraPosition.builder().target(s).zoom(DEFAULT_ZOOM_IN_LEVEL).build()
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
@@ -152,6 +153,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
         bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
         bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
+        bottomSheetTitle.setOnClickListener { createPopupMenu(bottomSheetTitle) }
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -159,7 +161,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             val upShiftRatio = 0.7f // BottomSheet shift 1 unit, map shift 0.7 unit
             val distance = slideOffset * bottomSheet.resources.getDimensionPixelSize(R.dimen.item_height)
             if (distance > 0) {
-                container.translationY = - distance * resources.displayMetrics.density * upShiftRatio
+                container.translationY = -distance * resources.displayMetrics.density * upShiftRatio
             }
         }
 
@@ -201,7 +203,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             positioningViewModel.reloadPosition()
             updateViewData()
         }
-        floatingButton.setOnLongClickListener { createPopupMenu(it) }
     }
 
     private fun updateViewData() {
@@ -215,7 +216,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     // Menu
     //================================================================================
 
-    private fun createPopupMenu(view: View?):Boolean {
+    private fun createPopupMenu(view: View?): Boolean {
         val popupMenu = PopupMenu(this, view!!)
         popupMenu.menuInflater.inflate(R.menu.map_menu, popupMenu.menu)
         popupMenu.menu.findItem(R.id.location_north).subMenu.clearHeader()
@@ -228,7 +229,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
 
-    private fun onMenuItemSelected(item: MenuItem): Boolean  {
+    private fun onMenuItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.taipei -> TwCity.TAIPEI
             R.id.keelung -> TwCity.KEELUNG
