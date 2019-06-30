@@ -154,7 +154,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setupBottomSheetTitle() {
         BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
         bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
-        bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
+        bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.currentCity]!!)
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -204,7 +204,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showIsNearestCitySuggestionIfNeeded() {
-        suggestionChangeCity.visibility = if (coffeeShopsViewModel.getNearestCity(this) == coffeeShopsViewModel.twCity) View.GONE else View.VISIBLE;
+        suggestionChangeCity.visibility = if (coffeeShopsViewModel.getNearestCity(this) == coffeeShopsViewModel.currentCity) View.GONE else View.VISIBLE;
         suggestionChangeCity.setOnClickListener { suggestionChangeCity.visibility = View.GONE }
     }
 

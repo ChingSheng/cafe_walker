@@ -23,7 +23,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
     var exceptions = MutableLiveData<Exception>()
     var loading = MutableLiveData<Boolean>()
 
-    var twCity: TwCity = TwCity.UNKNOWN
+    var currentCity: TwCity = TwCity.UNKNOWN
         private set
     var current: Map<String, CoffeeShop> = HashMap()
         private set
@@ -35,7 +35,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun setCoffeeShopsCity(twCity: TwCity) {
-        this.twCity = twCity
+        this.currentCity = twCity
         SharePrefRepository.getInstance().saveCity(getApplication(), twCity)
 
         loading.postValue(true)
