@@ -70,7 +70,7 @@ class CoffeeShopsViewModel(application: Application) : AndroidViewModel(applicat
         return result
     }
 
-    fun getLatLng(coffeeShop: CoffeeShop): LatLng {
+    private fun getLatLng(coffeeShop: CoffeeShop): LatLng {
         return LatLng(coffeeShop.latitude?.toDouble() ?: .0, coffeeShop.longitude?.toDouble() ?: .0)
     }
 
