@@ -54,7 +54,7 @@
 
     <!-- Events -->
     <string name="network_error">網路異常，請檢查你的網路連線狀態</string>
-    <string name="first_launch_msg">第一次啟動的朋友你好\n以下是使用小技巧：\n1. 下方橫欄點開可顯示周遭咖啡廳\n2. 點擊城市名稱可以更改城市\n3. 長按下方咖啡廳可在地圖前往</string>
+    <string name="first_launch_msg">第一次啟動的朋友你好\n以下是使用小技巧：\n1. 下方橫欄點開可顯示周遭咖啡廳\n2. 長按定位鈕可以更改城市\n3. 長按下方咖啡廳可在地圖前往</string>
     <string name="first_launch_button_text">我知道了</string>
     <string name="permission_not_grant">要取得裝置位置權限後才能使用呦～</string>
     <string name="shop_detail_invalid_id_msg">哎呀，有什麼出錯了</string>

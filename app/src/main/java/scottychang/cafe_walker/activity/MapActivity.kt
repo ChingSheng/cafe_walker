@@ -153,7 +153,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         BottomSheetBehavior.from(bottomSheet).setBottomSheetCallback(bottomSheetBehaviorCallback)
         bottomSheetTitleItem.setOnClickListener { toggleBottomSheetBehaviorState() }
         bottomSheetTitle.text = getString(CityString.data[coffeeShopsViewModel.twCity]!!)
-        bottomSheetTitle.setOnClickListener { createPopupMenu(bottomSheetTitle) }
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -206,6 +205,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         floatingButton.setOnClickListener {
             positioningViewModel.reloadPosition()
             updateViewData()
+        }
+        floatingButton.setOnLongClickListener { view ->
+            createPopupMenu(view)
         }
     }
 
