@@ -169,11 +169,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             when (newState) {
                 BottomSheetBehavior.STATE_EXPANDED -> {
                     bottomSheetIndicator.setImageResource(R.drawable.down)
-                    bottomSheetTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.sort_down, 0)
                 }
                 BottomSheetBehavior.STATE_COLLAPSED -> {
                     bottomSheetIndicator.setImageResource(R.drawable.up)
-                    bottomSheetTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.sort_up, 0)
                 }
             }
         }
