@@ -58,4 +58,5 @@
     <string name="first_launch_button_text">我知道了</string>
     <string name="permission_not_grant">要取得裝置位置權限後才能使用呦～</string>
     <string name="shop_detail_invalid_id_msg">哎呀，有什麼出錯了</string>
+    <string name="city_change_suggestion">不在所在的城市嗎？長按定位鈕可以選擇城市</string>
 </resources>

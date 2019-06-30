@@ -46,6 +46,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val bottomSheetIndicator: ImageView by bindView(R.id.indicator)
     private val floatingButton: FloatingActionButton by bindView(R.id.floating_button)
     private val loading: FrameLayout by bindView(R.id.loading)
+    private val suggestionChangeCity: TextView by bindView(R.id.suggestion_change_city)
 
     private lateinit var mapFragment: MapFragment
     private lateinit var coffeeShopsViewModel: CoffeeShopsViewModel
@@ -140,6 +141,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         setupMapViewCluster()
         setupBottomSheetTitle()
         setupBottomSheetData()
+        showIsNearestCitySuggestionIfNeeded()
     }
 
     private fun setupMapViewCluster() {
@@ -199,6 +201,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         )
+    }
+
+    private fun showIsNearestCitySuggestionIfNeeded() {
+        suggestionChangeCity.visibility = if (coffeeShopsViewModel.getNearestCity(this) == coffeeShopsViewModel.twCity) View.GONE else View.VISIBLE;
+        suggestionChangeCity.setOnClickListener { suggestionChangeCity.visibility = View.GONE }
     }
 
     private fun initFloatingButton() {
